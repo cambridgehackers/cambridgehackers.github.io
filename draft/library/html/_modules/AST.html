@@ -1,0 +1,399 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AST &mdash; connectal 14.11.6 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '14.11.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="connectal 14.11.6 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../bsv-pkgindex.html" title="Bsv Package Index"
+             >packages</a> |</li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for AST</h1><div class="highlight"><pre>
+<span class="c"># Copyright (c) 2014 Quanta Research Cambridge, Inc</span>
+<span class="c">#</span>
+<span class="c"># Permission is hereby granted, free of charge, to any person obtaining a</span>
+<span class="c"># copy of this software and associated documentation files (the &quot;Software&quot;),</span>
+<span class="c"># to deal in the Software without restriction, including without limitation</span>
+<span class="c"># the rights to use, copy, modify, merge, publish, distribute, sublicense,</span>
+<span class="c"># and/or sell copies of the Software, and to permit persons to whom the</span>
+<span class="c"># Software is furnished to do so, subject to the following conditions:</span>
+<span class="c">#</span>
+<span class="c"># The above copyright notice and this permission notice shall be included</span>
+<span class="c"># in all copies or substantial portions of the Software.</span>
+<span class="c">#</span>
+<span class="c"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS</span>
+<span class="c"># OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL</span>
+<span class="c"># THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING</span>
+<span class="c"># FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER</span>
+<span class="c"># DEALINGS IN THE SOFTWARE.</span>
+<span class="c">#</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+
+<span class="kn">import</span> <span class="nn">AST</span>
+<span class="kn">import</span> <span class="nn">globalv</span>
+<span class="kn">import</span> <span class="nn">util</span>
+
+<span class="n">tempFilename</span> <span class="o">=</span> <span class="s">&#39;generatedDesignInterfaceFile.json&#39;</span>
+
+<div class="viewcode-block" id="InterfaceMixin"><a class="viewcode-back" href="../python/AST.html#AST.InterfaceMixin">[docs]</a><span class="k">class</span> <span class="nc">InterfaceMixin</span><span class="p">:</span>
+<div class="viewcode-block" id="InterfaceMixin.getSubinterface"><a class="viewcode-back" href="../python/AST.html#AST.InterfaceMixin.getSubinterface">[docs]</a>    <span class="k">def</span> <span class="nf">getSubinterface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="n">subinterfaceName</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">globalv</span><span class="o">.</span><span class="n">globalvars</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">subinterfaceName</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">subinterface</span> <span class="o">=</span> <span class="n">globalv</span><span class="o">.</span><span class="n">globalvars</span><span class="p">[</span><span class="n">subinterfaceName</span><span class="p">]</span>
+        <span class="c">#print &#39;subinterface&#39;, subinterface, subinterface</span>
+        <span class="k">return</span> <span class="n">subinterface</span></div>
+<div class="viewcode-block" id="InterfaceMixin.parentClass"><a class="viewcode-back" href="../python/AST.html#AST.InterfaceMixin.parentClass">[docs]</a>    <span class="k">def</span> <span class="nf">parentClass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="n">default</span> <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeClassInstances</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">typeClassInstances</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">rv</span>
+</div></div>
+<div class="viewcode-block" id="dtInfo"><a class="viewcode-back" href="../python/AST.html#AST.dtInfo">[docs]</a><span class="k">def</span> <span class="nf">dtInfo</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">):</span>
+        <span class="n">rc</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#39;type&#39;</span><span class="p">):</span>
+        <span class="n">rc</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">type</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#39;params&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">rc</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">dtInfo</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="n">params</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#39;elements&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;Enum&#39;</span><span class="p">:</span>
+            <span class="n">rc</span><span class="p">[</span><span class="s">&#39;elements&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">elements</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rc</span><span class="p">[</span><span class="s">&#39;elements&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">piInfo</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="n">elements</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">rc</span>
+</div>
+<div class="viewcode-block" id="piInfo"><a class="viewcode-back" href="../python/AST.html#AST.piInfo">[docs]</a><span class="k">def</span> <span class="nf">piInfo</span><span class="p">(</span><span class="n">pitem</span><span class="p">):</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">rc</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pitem</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">rc</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dtInfo</span><span class="p">(</span><span class="n">pitem</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rc</span>
+</div>
+<div class="viewcode-block" id="declInfo"><a class="viewcode-back" href="../python/AST.html#AST.declInfo">[docs]</a><span class="k">def</span> <span class="nf">declInfo</span><span class="p">(</span><span class="n">mitem</span><span class="p">):</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">rc</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mitem</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">rc</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">pitem</span> <span class="ow">in</span> <span class="n">mitem</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+        <span class="n">rc</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">piInfo</span><span class="p">(</span><span class="n">pitem</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">rc</span>
+</div>
+<div class="viewcode-block" id="classInfo"><a class="viewcode-back" href="../python/AST.html#AST.classInfo">[docs]</a><span class="k">def</span> <span class="nf">classInfo</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;Package&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">package</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s">&#39;moduleContext&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span>
+        <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="s">&#39;parentLportal&#39;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">parentClass</span><span class="p">(</span><span class="s">&quot;portal&quot;</span><span class="p">),</span>
+        <span class="s">&#39;parentPortal&#39;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">parentClass</span><span class="p">(</span><span class="s">&quot;Portal&quot;</span><span class="p">),</span>
+        <span class="s">&#39;decls&#39;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">mitem</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">decls</span><span class="p">:</span>
+        <span class="n">rc</span><span class="p">[</span><span class="s">&#39;decls&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">declInfo</span><span class="p">(</span><span class="n">mitem</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">rc</span>
+</div>
+<div class="viewcode-block" id="serialize_json"><a class="viewcode-back" href="../python/AST.html#AST.serialize_json">[docs]</a><span class="k">def</span> <span class="nf">serialize_json</span><span class="p">(</span><span class="n">interfaces</span><span class="p">,</span> <span class="n">globalimports</span><span class="p">,</span> <span class="n">dutname</span><span class="p">,</span> <span class="n">interfaceList</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Returns json serialized data&#39;&#39;&#39;</span>
+    <span class="n">itemlist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">interfaces</span><span class="p">:</span>
+        <span class="n">itemlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">classInfo</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+    <span class="n">jfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">tempFilename</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">toplevel</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">toplevel</span><span class="p">[</span><span class="s">&#39;interfaces&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">itemlist</span>
+    <span class="n">toplevel</span><span class="p">[</span><span class="s">&#39;interfacesList&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">interfaceList</span>
+    <span class="n">gvlist</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">globalv</span><span class="o">.</span><span class="n">globalvars</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">gvlist</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;type&#39;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">type</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;TypeDef&#39;</span><span class="p">:</span>
+            <span class="c">#print &#39;TYPEDEF globalvar:&#39;, key, value</span>
+            <span class="n">gvlist</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">gvlist</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s">&#39;tdtype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dtInfo</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">tdtype</span><span class="p">)</span>
+            <span class="n">gvlist</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s">&#39;params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">params</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Unprocessed globalvar:&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
+    <span class="n">toplevel</span><span class="p">[</span><span class="s">&#39;globalvars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gvlist</span>
+    <span class="n">gdlist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">globalv</span><span class="o">.</span><span class="n">globaldecls</span><span class="p">:</span>
+        <span class="n">newitem</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;type&#39;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">type</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;TypeDef&#39;</span><span class="p">:</span>
+            <span class="n">newitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">newitem</span><span class="p">[</span><span class="s">&#39;tdtype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dtInfo</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">tdtype</span><span class="p">)</span>
+            <span class="n">newitem</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">params</span>
+            <span class="c">#print &#39;TYPEDEF globaldecl:&#39;, item, &#39;ZZZ&#39;, newitem</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Unprocessed globaldecl:&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="s">&#39;ZZZ&#39;</span><span class="p">,</span> <span class="n">newitem</span>
+        <span class="n">gdlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newitem</span><span class="p">)</span>
+    <span class="n">toplevel</span><span class="p">[</span><span class="s">&#39;globaldecls&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdlist</span>
+    <span class="n">toplevel</span><span class="p">[</span><span class="s">&#39;globalimports&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">globalimports</span>
+    <span class="n">toplevel</span><span class="p">[</span><span class="s">&#39;dutname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dutname</span>
+    <span class="k">if</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">toplevel</span><span class="p">,</span> <span class="n">jfile</span><span class="p">,</span> <span class="n">sort_keys</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">indent</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">jfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">j2file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">tempFilename</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">toplevelnew</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">j2file</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Unable to write json file&#39;</span><span class="p">,</span> <span class="n">tempFilename</span>
+    <span class="k">return</span> <span class="n">toplevel</span>
+</div>
+<div class="viewcode-block" id="Method"><a class="viewcode-back" href="../python/AST.html#AST.Method">[docs]</a><span class="k">class</span> <span class="nc">Method</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">return_type</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;Method&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_type</span> <span class="o">=</span> <span class="n">return_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">sparams</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">__repr__</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s">&#39;&lt;method: </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_type</span><span class="p">,</span> <span class="n">sparams</span><span class="p">)</span>
+<div class="viewcode-block" id="Method.instantiate"><a class="viewcode-back" href="../python/AST.html#AST.Method.instantiate">[docs]</a>    <span class="k">def</span> <span class="nf">instantiate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramBindings</span><span class="p">):</span>
+        <span class="c">#print &#39;instantiate method&#39;, self.name, self.params</span>
+        <span class="k">return</span> <span class="n">Method</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                      <span class="bp">self</span><span class="o">.</span><span class="n">return_type</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">paramBindings</span><span class="p">),</span>
+                      <span class="p">[</span> <span class="n">p</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">paramBindings</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">])</span>
+</div></div>
+<div class="viewcode-block" id="Function"><a class="viewcode-back" href="../python/AST.html#AST.Function">[docs]</a><span class="k">class</span> <span class="nc">Function</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">return_type</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;Function&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_type</span> <span class="o">=</span> <span class="n">return_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;&lt;function: </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> NONE&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_type</span><span class="p">)</span>
+        <span class="n">sparams</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s">&#39;&lt;function: </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_type</span><span class="p">,</span> <span class="n">sparams</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Variable"><a class="viewcode-back" href="../python/AST.html#AST.Variable">[docs]</a><span class="k">class</span> <span class="nc">Variable</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;Variable&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">t</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;&lt;variable: </span><span class="si">%s</span><span class="s"> : </span><span class="si">%s</span><span class="s">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Interface"><a class="viewcode-back" href="../python/AST.html#AST.Interface">[docs]</a><span class="k">class</span> <span class="nc">Interface</span><span class="p">(</span><span class="n">InterfaceMixin</span><span class="p">):</span>
+    <span class="s">&#39;Represents a BSV Interface&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">decls</span><span class="p">,</span> <span class="n">subinterfacename</span><span class="p">,</span> <span class="n">packagename</span><span class="p">):</span>
+        <span class="s">&#39;Create an Interface with name, params, decls, subintfacename, packagename&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;Interface&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decls</span> <span class="o">=</span> <span class="n">decls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subinterfacename</span> <span class="o">=</span> <span class="n">subinterfacename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">typeClassInstances</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">package</span> <span class="o">=</span> <span class="n">packagename</span>
+<div class="viewcode-block" id="Interface.interfaceType"><a class="viewcode-back" href="../python/AST.html#AST.Interface.interfaceType">[docs]</a>    <span class="k">def</span> <span class="nf">interfaceType</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{interface: </span><span class="si">%s</span><span class="s"> (</span><span class="si">%s</span><span class="s">) : </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">typeClassInstances</span><span class="p">)</span>
+<div class="viewcode-block" id="Interface.instantiate"><a class="viewcode-back" href="../python/AST.html#AST.Interface.instantiate">[docs]</a>    <span class="k">def</span> <span class="nf">instantiate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramBindings</span><span class="p">):</span>
+        <span class="n">newInterface</span> <span class="o">=</span> <span class="n">Interface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[],</span>
+                                 <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">paramBindings</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">decls</span><span class="p">],</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">subinterfacename</span><span class="p">,</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">package</span><span class="p">)</span>
+        <span class="n">newInterface</span><span class="o">.</span><span class="n">typeClassInstances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">typeClassInstances</span>
+        <span class="k">return</span> <span class="n">newInterface</span>
+</div></div>
+<div class="viewcode-block" id="Typeclass"><a class="viewcode-back" href="../python/AST.html#AST.Typeclass">[docs]</a><span class="k">class</span> <span class="nc">Typeclass</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;TypeClass&#39;</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{typeclass </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TypeclassInstance"><a class="viewcode-back" href="../python/AST.html#AST.TypeclassInstance">[docs]</a><span class="k">class</span> <span class="nc">TypeclassInstance</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">provisos</span><span class="p">,</span> <span class="n">decl</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">provisos</span> <span class="o">=</span> <span class="n">provisos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decl</span> <span class="o">=</span> <span class="n">decl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;TypeclassInstance&#39;</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{typeclassinstance </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Module"><a class="viewcode-back" href="../python/AST.html#AST.Module">[docs]</a><span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;represents a BSV Module&#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">moduleContext</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">interface</span><span class="p">,</span> <span class="n">provisos</span><span class="p">,</span> <span class="n">decls</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;instantiates a BSV Module&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;Module&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">moduleContext</span> <span class="o">=</span> <span class="n">moduleContext</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interface</span> <span class="o">=</span> <span class="n">interface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">provisos</span> <span class="o">=</span> <span class="n">provisos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decls</span> <span class="o">=</span> <span class="n">decls</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;string representation of a BSV Module&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="s">&#39;{module: </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decls</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="EnumElement"><a class="viewcode-back" href="../python/AST.html#AST.EnumElement">[docs]</a><span class="k">class</span> <span class="nc">EnumElement</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">qualifiers</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qualifiers</span> <span class="o">=</span> <span class="n">qualifiers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{enumelt: </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Enum"><a class="viewcode-back" href="../python/AST.html#AST.Enum">[docs]</a><span class="k">class</span> <span class="nc">Enum</span><span class="p">:</span>
+    <span class="s">&#39;Represents a BSV Enum&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;Enum&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">elements</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{enum: </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
+<div class="viewcode-block" id="Enum.instantiate"><a class="viewcode-back" href="../python/AST.html#AST.Enum.instantiate">[docs]</a>    <span class="k">def</span> <span class="nf">instantiate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramBindings</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+</div></div>
+<div class="viewcode-block" id="StructMember"><a class="viewcode-back" href="../python/AST.html#AST.StructMember">[docs]</a><span class="k">class</span> <span class="nc">StructMember</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{field: </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<div class="viewcode-block" id="StructMember.instantiate"><a class="viewcode-back" href="../python/AST.html#AST.StructMember.instantiate">[docs]</a>    <span class="k">def</span> <span class="nf">instantiate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramBindings</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">StructMember</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">paramBindings</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="Struct"><a class="viewcode-back" href="../python/AST.html#AST.Struct">[docs]</a><span class="k">class</span> <span class="nc">Struct</span><span class="p">:</span>
+    <span class="s">&#39;Represents a BSV Struct&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;Struct&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">elements</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{struct: </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
+<div class="viewcode-block" id="Struct.instantiate"><a class="viewcode-back" href="../python/AST.html#AST.Struct.instantiate">[docs]</a>    <span class="k">def</span> <span class="nf">instantiate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramBindings</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Struct</span><span class="p">([</span><span class="n">e</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">paramBindings</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">])</span>
+</div></div>
+<div class="viewcode-block" id="TypeDef"><a class="viewcode-back" href="../python/AST.html#AST.TypeDef">[docs]</a><span class="k">class</span> <span class="nc">TypeDef</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tdtype</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;TypeDef&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tdtype</span> <span class="o">=</span> <span class="n">tdtype</span>
+        <span class="k">if</span> <span class="n">tdtype</span> <span class="ow">and</span> <span class="n">tdtype</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s">&#39;Type&#39;</span><span class="p">:</span>
+            <span class="n">tdtype</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;TypeDef&#39;</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{typedef: </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tdtype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Param"><a class="viewcode-back" href="../python/AST.html#AST.Param">[docs]</a><span class="k">class</span> <span class="nc">Param</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">t</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{param </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+<div class="viewcode-block" id="Param.instantiate"><a class="viewcode-back" href="../python/AST.html#AST.Param.instantiate">[docs]</a>    <span class="k">def</span> <span class="nf">instantiate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramBindings</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">paramBindings</span><span class="p">))</span>
+</div></div>
+<div class="viewcode-block" id="Type"><a class="viewcode-back" href="../python/AST.html#AST.Type">[docs]</a><span class="k">class</span> <span class="nc">Type</span><span class="p">:</span>
+    <span class="s">&#39;Represents a BSV Type&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;Type&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="n">params</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">sparams</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s">&#39;{type: </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">sparams</span><span class="p">)</span>
+<div class="viewcode-block" id="Type.instantiate"><a class="viewcode-back" href="../python/AST.html#AST.Type.instantiate">[docs]</a>    <span class="k">def</span> <span class="nf">instantiate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramBindings</span><span class="p">):</span>
+        <span class="c">#print &#39;Type.instantiate&#39;, self.name, paramBindings</span>
+        <span class="k">if</span> <span class="n">paramBindings</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">paramBindings</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">paramBindings</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">])</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../bsv-pkgindex.html" title="Bsv Package Index"
+             >packages</a> |</li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Jamey Hicks, Myron King, John Ankcorn.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

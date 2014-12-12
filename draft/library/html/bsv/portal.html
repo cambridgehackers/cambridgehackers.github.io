@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>4. Portal Package &mdash; connectal 14.11.6 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '14.11.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="connectal 14.11.6 documentation" href="../index.html" />
+    <link rel="up" title="Connectal BSV Libraries" href="bsv.html" />
+    <link rel="next" title="Connectal Examples" href="../examples/index.html" />
+    <link rel="prev" title="3. CtrlMux Package" href="ctrlmux.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../bsv-pkgindex.html" title="Bsv Package Index"
+             >packages</a> |</li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../examples/index.html" title="Connectal Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ctrlmux.html" title="3. CtrlMux Package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
+          <li><a href="bsv.html" accesskey="U">Connectal BSV Libraries</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="package-Portal">
+<span id="portal-package"></span><h1>4. Portal Package<a class="headerlink" href="#package-Portal" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="pipeportal-interface">
+<h2>4.1. PipePortal Interface<a class="headerlink" href="#pipeportal-interface" title="Permalink to this headline">¶</a></h2>
+<dl class="interface">
+<dt id="Portal::PipePortal">
+<em class="property">interface </em><tt class="descclassname">Portal::</tt><tt class="descname">PipePortal</tt><a class="headerlink" href="#Portal::PipePortal" title="Permalink to this definition">¶</a></dt>
+<dt>
+<tt class="descname">:parameter: numeric type numRequests, numeric type numIndications, numeric type slaveDataWidth</tt></dt>
+<dd><blockquote>
+<div><dl class="method">
+<dt id="Portal::PipePortal.messageSize">
+<tt class="descname">messageSize</tt><big>(</big>Bit#(16) methodNumber<big>)</big> &rarr; Bit#(16)<a class="headerlink" href="#Portal::PipePortal.messageSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the message size of the methodNumber method of the portal.</p>
+</dd></dl>
+
+</div></blockquote>
+<dl class="subinterface">
+<dt id="Portal::PipePortal.requests">
+<tt class="descname">requests</tt> &rarr; Vector#(numRequests, PipeIn#(Bit#(slaveDataWidth)))<a class="headerlink" href="#Portal::PipePortal.requests" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="subinterface">
+<dt id="Portal::PipePortal.indications">
+<tt class="descname">indications</tt> &rarr; Vector#(numIndications, PipeOut#(Bit#(slaveDataWidth)))<a class="headerlink" href="#Portal::PipePortal.indications" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="memportal-interface">
+<h2>4.2. MemPortal Interface<a class="headerlink" href="#memportal-interface" title="Permalink to this headline">¶</a></h2>
+<dl class="interface">
+<dt id="Portal::MemPortal">
+<em class="property">interface </em><tt class="descclassname">Portal::</tt><tt class="descname">MemPortal</tt><a class="headerlink" href="#Portal::MemPortal" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="subinterface">
+<dt id="Portal::MemPortal.slave">
+<tt class="descname">slave</tt> &rarr; PhysMemSlave#(slaveAddrWidth,slaveDataWidth)<a class="headerlink" href="#Portal::MemPortal.slave" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="subinterface">
+<dt id="Portal::MemPortal.interrupt">
+<tt class="descname">interrupt</tt> &rarr; ReadOnly#(Bool)<a class="headerlink" href="#Portal::MemPortal.interrupt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="subinterface">
+<dt id="Portal::MemPortal.top">
+<tt class="descname">top</tt> &rarr; WriteOnly#(Bool)<a class="headerlink" href="#Portal::MemPortal.top" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="Portal::getSlave">
+<tt class="descclassname">Portal::</tt><tt class="descname">getSlave</tt><big>(</big>MemPortal#(_a,_d) p<big>)</big> &rarr; PhysMemSlave(_a,_d)<a class="headerlink" href="#Portal::getSlave" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="Portal::getInterrupt">
+<tt class="descclassname">Portal::</tt><tt class="descname">getInterrupt</tt><big>(</big>MemPortal#(_a,_d) p<big>)</big> &rarr; ReadOnly#(Bool)<a class="headerlink" href="#Portal::getInterrupt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="Portal::getInterruptVector">
+<tt class="descclassname">Portal::</tt><tt class="descname">getInterruptVector</tt><big>(</big>Vector#(numPortals, MemPortal#(_a,_d)) portals<big>)</big> &rarr; Vector#(16, ReadOnly#(Bool))<a class="headerlink" href="#Portal::getInterruptVector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="sharememoryportal-interface">
+<h2>4.3. ShareMemoryPortal Interface<a class="headerlink" href="#sharememoryportal-interface" title="Permalink to this headline">¶</a></h2>
+<dl class="interface">
+<dt id="Portal::SharedMemoryPortal">
+<em class="property">interface </em><tt class="descclassname">Portal::</tt><tt class="descname">SharedMemoryPortal</tt><a class="headerlink" href="#Portal::SharedMemoryPortal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should be in SharedMemoryPortal.bsv</p>
+<dl class="subinterface">
+<dt>
+<tt class="descname">readClient;</tt></dt>
+<dd></dd></dl>
+
+<dl class="subinterface">
+<dt id="Portal::SharedMemoryPortal.writeClient">
+<tt class="descname">writeClient</tt> &rarr; MemWriteClient#(dataBusWidth)<a class="headerlink" href="#Portal::SharedMemoryPortal.writeClient" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="interface">
+<dt id="Portal::SharedMemoryPortal.cfg">
+<em class="property">interface </em><tt class="descname">cfg</tt> &rarr; SharedMemoryPortalConfig<a class="headerlink" href="#Portal::SharedMemoryPortal.cfg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="subinterface">
+<dt id="Portal::interrupt">
+<tt class="descclassname">Portal::</tt><tt class="descname">interrupt</tt> &rarr; ReadOnly#(Bool)<a class="headerlink" href="#Portal::interrupt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">4. Portal Package</a><ul>
+<li><a class="reference internal" href="#pipeportal-interface">4.1. PipePortal Interface</a></li>
+<li><a class="reference internal" href="#memportal-interface">4.2. MemPortal Interface</a></li>
+<li><a class="reference internal" href="#sharememoryportal-interface">4.3. ShareMemoryPortal Interface</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ctrlmux.html"
+                        title="previous chapter">3. CtrlMux Package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../examples/index.html"
+                        title="next chapter">Connectal Examples</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/bsv/portal.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../bsv-pkgindex.html" title="Bsv Package Index"
+             >packages</a> |</li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../examples/index.html" title="Connectal Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ctrlmux.html" title="3. CtrlMux Package"
+             >previous</a> |</li>
+        <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
+          <li><a href="bsv.html" >Connectal BSV Libraries</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Jamey Hicks, Myron King, John Ankcorn.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

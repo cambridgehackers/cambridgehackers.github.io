@@ -1,0 +1,27 @@
+discover_tcp
+============
+
+.. automodule:: discover_tcp
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      connect_with_adb
+      detect_network
+      do_work
+      int2ip
+      ip2int
+      open_adb_socket
+   
+   
+
+   
+   
+   
+
+   
+   
+   

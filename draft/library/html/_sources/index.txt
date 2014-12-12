@@ -1,0 +1,26 @@
+.. connectal documentation master file, created by
+   sphinx-quickstart on Tue Nov 25 12:27:26 2014.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to connectal's documentation!
+=====================================
+
+Contents:
+
+.. toctree::
+   :maxdepth: 2
+
+   intro.rst
+   bsv/bsv.rst
+   examples/index.rst
+   python.rst
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`pkgindex`
+* :ref:`search`
+

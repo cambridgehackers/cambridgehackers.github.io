@@ -1,0 +1,656 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cppgen &mdash; connectal 14.11.6 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '14.11.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="connectal 14.11.6 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../bsv-pkgindex.html" title="Bsv Package Index"
+             >packages</a> |</li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for cppgen</h1><div class="highlight"><pre>
+<span class="c">##</span>
+<span class="c">## Copyright (C) 2013 Nokia, Inc</span>
+<span class="c">## Copyright (c) 2013-2014 Quanta Research Cambridge, Inc.</span>
+
+<span class="c">## Permission is hereby granted, free of charge, to any person</span>
+<span class="c">## obtaining a copy of this software and associated documentation</span>
+<span class="c">## files (the &quot;Software&quot;), to deal in the Software without</span>
+<span class="c">## restriction, including without limitation the rights to use, copy,</span>
+<span class="c">## modify, merge, publish, distribute, sublicense, and/or sell copies</span>
+<span class="c">## of the Software, and to permit persons to whom the Software is</span>
+<span class="c">## furnished to do so, subject to the following conditions:</span>
+
+<span class="c">## The above copyright notice and this permission notice shall be</span>
+<span class="c">## included in all copies or substantial portions of the Software.</span>
+
+<span class="c">## THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,</span>
+<span class="c">## EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF</span>
+<span class="c">## MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND</span>
+<span class="c">## NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS</span>
+<span class="c">## BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN</span>
+<span class="c">## ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN</span>
+<span class="c">## CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c">## SOFTWARE.</span>
+
+<span class="kn">import</span> <span class="nn">functools</span><span class="o">,</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">re</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">util</span>
+
+<span class="n">sizeofUint32_t</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">generatedVectors</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">proxyClassPrefixTemplate</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
+<span class="s">class </span><span class="si">%(className)s</span><span class="s">Proxy : public </span><span class="si">%(parentClass)s</span><span class="s"> {</span>
+<span class="s">public:</span>
+<span class="s">    </span><span class="si">%(className)s</span><span class="s">Proxy(int id, PortalPoller *poller = 0) : Portal(id, </span><span class="si">%(className)s</span><span class="s">_reqinfo, NULL, NULL, poller) {};</span>
+<span class="s">    </span><span class="si">%(className)s</span><span class="s">Proxy(int id, PortalItemFunctions *item, void *param, PortalPoller *poller = 0) : Portal(id, </span><span class="si">%(className)s</span><span class="s">_reqinfo, NULL, NULL, item, param, poller) {};</span>
+<span class="s">&#39;&#39;&#39;</span>
+
+<span class="n">wrapperClassPrefixTemplate</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
+<span class="s">extern </span><span class="si">%(className)s</span><span class="s">Cb </span><span class="si">%(className)s</span><span class="s">_cbTable;</span>
+<span class="s">class </span><span class="si">%(className)s</span><span class="s">Wrapper : public </span><span class="si">%(parentClass)s</span><span class="s"> {</span>
+<span class="s">public:</span>
+<span class="s">    </span><span class="si">%(className)s</span><span class="s">Wrapper(int id, PortalPoller *poller = 0) : Portal(id, </span><span class="si">%(className)s</span><span class="s">_reqinfo, </span><span class="si">%(className)s</span><span class="s">_handleMessage, (void *)&amp;</span><span class="si">%(className)s</span><span class="s">_cbTable, poller) {</span>
+<span class="s">        pint.parent = static_cast&lt;void *&gt;(this);</span>
+<span class="s">    };</span>
+<span class="s">    </span><span class="si">%(className)s</span><span class="s">Wrapper(int id, PortalItemFunctions *item, void *param, PortalPoller *poller = 0) : Portal(id, </span><span class="si">%(className)s</span><span class="s">_reqinfo, </span><span class="si">%(className)s</span><span class="s">_handleMessage, (void *)&amp;</span><span class="si">%(className)s</span><span class="s">_cbTable, item, param, poller) {</span>
+<span class="s">        pint.parent = static_cast&lt;void *&gt;(this);</span>
+<span class="s">    };</span>
+<span class="s">&#39;&#39;&#39;</span>
+
+<span class="n">handleMessageTemplateDecl</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
+<span class="s">int </span><span class="si">%(className)s</span><span class="s">_handleMessage(struct PortalInternal *p, unsigned int channel, int messageFd)&#39;&#39;&#39;</span>
+
+<span class="n">handleMessageTemplate1</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
+<span class="s">{</span>
+<span class="s">    static int runaway = 0;</span>
+<span class="s">    int tmpfd;</span>
+<span class="s">    unsigned int tmp;</span>
+<span class="s">    volatile unsigned int* temp_working_addr = p-&gt;item-&gt;mapchannelInd(p, channel);</span>
+<span class="s">    switch (channel) {&#39;&#39;&#39;</span>
+
+<span class="n">handleMessageCase</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
+<span class="s">    case </span><span class="si">%(channelNumber)s</span><span class="s">:</span>
+<span class="s">        {</span>
+<span class="s">        </span><span class="si">%(paramStructDeclarations)s</span><span class="s"></span>
+<span class="s">        p-&gt;item-&gt;recv(p, temp_working_addr, </span><span class="si">%(wordLen)s</span><span class="s">, &amp;tmpfd);</span>
+<span class="s">        </span><span class="si">%(paramStructDemarshall)s</span><span class="s"></span>
+<span class="s">        </span><span class="si">%(responseCase)s</span><span class="s"></span>
+<span class="s">        }</span>
+<span class="s">        break;&#39;&#39;&#39;</span>
+
+<span class="n">handleMessageTemplate2</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
+<span class="s">    default:</span>
+<span class="s">        PORTAL_PRINTF(&quot;</span><span class="si">%(className)s</span><span class="s">_handleMessage: unknown channel 0x</span><span class="si">%%</span><span class="s">x</span><span class="se">\\</span><span class="s">n&quot;, channel);</span>
+<span class="s">        if (runaway++ &gt; 10) {</span>
+<span class="s">            PORTAL_PRINTF(&quot;</span><span class="si">%(className)s</span><span class="s">_handleMessage: too many bogus indications, exiting</span><span class="se">\\</span><span class="s">n&quot;);</span>
+<span class="s">#ifndef __KERNEL__</span>
+<span class="s">            exit(-1);</span>
+<span class="s">#endif</span>
+<span class="s">        }</span>
+<span class="s">        return 0;</span>
+<span class="s">    }</span>
+<span class="s">    return 0;</span>
+<span class="s">}</span>
+<span class="s">&#39;&#39;&#39;</span>
+
+<span class="n">proxyMethodTemplateDecl</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
+<span class="s">int </span><span class="si">%(className)s</span><span class="s">_</span><span class="si">%(methodName)s</span><span class="s"> (</span><span class="si">%(paramProxyDeclarations)s</span><span class="s"> )&#39;&#39;&#39;</span>
+
+<span class="n">proxyMethodTemplate</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
+<span class="s">{</span>
+<span class="s">    volatile unsigned int* temp_working_addr_start = p-&gt;item-&gt;mapchannelReq(p, </span><span class="si">%(channelNumber)s</span><span class="s">);</span>
+<span class="s">    volatile unsigned int* temp_working_addr = temp_working_addr_start;</span>
+<span class="s">    if (p-&gt;item-&gt;busywait(p, </span><span class="si">%(channelNumber)s</span><span class="s">, &quot;</span><span class="si">%(className)s</span><span class="s">_</span><span class="si">%(methodName)s</span><span class="s">&quot;)) return 1;</span>
+<span class="s">    </span><span class="si">%(paramStructMarshall)s</span><span class="s"></span>
+<span class="s">    p-&gt;item-&gt;send(p, temp_working_addr_start, (</span><span class="si">%(channelNumber)s</span><span class="s"> &lt;&lt; 16) | </span><span class="si">%(wordLenP1)s</span><span class="s">, </span><span class="si">%(fdName)s</span><span class="s">);</span>
+<span class="s">    return 0;</span>
+<span class="s">};</span>
+<span class="s">&#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="indent"><a class="viewcode-back" href="../python/cppgen.html#cppgen.indent">[docs]</a><span class="k">def</span> <span class="nf">indent</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">indentation</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">indentation</span><span class="p">):</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="cName"><a class="viewcode-back" href="../python/cppgen.html#cppgen.cName">[docs]</a><span class="k">def</span> <span class="nf">cName</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">unicode</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">,</span> <span class="s">&#39;$&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">cName</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="paramInfo"><a class="viewcode-back" href="../python/cppgen.html#cppgen.paramInfo">[docs]</a><span class="k">class</span> <span class="nc">paramInfo</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">shifted</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">assignOp</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shifted</span> <span class="o">=</span> <span class="n">shifted</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datatype</span> <span class="o">=</span> <span class="n">datatype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assignOp</span> <span class="o">=</span> <span class="n">assignOp</span>
+
+<span class="c"># resurse interface types and flattening all structs into a list of types</span></div>
+<div class="viewcode-block" id="collectMembers"><a class="viewcode-back" href="../python/cppgen.html#cppgen.collectMembers">[docs]</a><span class="k">def</span> <span class="nf">collectMembers</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">pitem</span><span class="p">):</span>
+    <span class="n">membtype</span> <span class="o">=</span> <span class="n">pitem</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span>
+    <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">membtype</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Bit&#39;</span> <span class="ow">or</span> <span class="n">membtype</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Int&#39;</span> <span class="ow">or</span> <span class="n">membtype</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;UInt&#39;</span> \
+            <span class="ow">or</span> <span class="n">membtype</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Float&#39;</span> <span class="ow">or</span> <span class="n">membtype</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Bool&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[(</span><span class="s">&#39;</span><span class="si">%s%s</span><span class="s">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="n">pitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]),</span><span class="n">membtype</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="n">membtype</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;SpecialTypeForSendingFd&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[(</span><span class="s">&#39;</span><span class="si">%s%s</span><span class="s">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="n">pitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]),</span><span class="n">membtype</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="n">membtype</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Vector&#39;</span><span class="p">:</span>
+            <span class="n">nElt</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">membtype</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">])</span>
+            <span class="n">retitem</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">while</span> <span class="n">ind</span> <span class="o">&lt;</span> <span class="n">nElt</span><span class="p">:</span>
+                <span class="n">retitem</span><span class="o">.</span><span class="n">append</span><span class="p">([(</span><span class="s">&#39;</span><span class="si">%s%s</span><span class="s">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="n">pitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span><span class="o">+</span><span class="s">&#39;[&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;]&#39;</span><span class="p">),</span><span class="n">membtype</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])])</span>
+                <span class="n">ind</span> <span class="o">=</span> <span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">retitem</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">td</span> <span class="o">=</span> <span class="n">globalv_globalvars</span><span class="p">[</span><span class="n">membtype</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]]</span>
+            <span class="c">#print &#39;instantiate&#39;, membtype[&#39;params&#39;]</span>
+            <span class="n">tdtype</span> <span class="o">=</span> <span class="n">td</span><span class="p">[</span><span class="s">&#39;tdtype&#39;</span><span class="p">]</span>
+<span class="c">#.instantiate(dict(zip(td.params, membtype[&#39;params&#39;])))</span>
+            <span class="c">#print &#39;           &#39;, membtype</span>
+            <span class="k">if</span> <span class="n">tdtype</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Struct&#39;</span><span class="p">:</span>
+                <span class="n">ns</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s%s</span><span class="s">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="n">pitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span>
+                <span class="n">rv</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">collectMembers</span><span class="p">,</span> <span class="n">ns</span><span class="p">),</span> <span class="n">tdtype</span><span class="p">[</span><span class="s">&#39;elements&#39;</span><span class="p">])</span>
+                <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">rv</span><span class="p">,[])</span>
+            <span class="n">membtype</span> <span class="o">=</span> <span class="n">tdtype</span>
+            <span class="k">if</span> <span class="n">tdtype</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Enum&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[(</span><span class="s">&#39;</span><span class="si">%s%s</span><span class="s">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span><span class="n">pitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]),</span><span class="n">membtype</span><span class="p">)]</span>
+            <span class="c">#print &#39;resolved to type&#39;, membtype[&#39;type&#39;], membtype[&#39;name&#39;], membtype</span>
+</div>
+<div class="viewcode-block" id="typeNumeric"><a class="viewcode-back" href="../python/cppgen.html#cppgen.typeNumeric">[docs]</a><span class="k">def</span> <span class="nf">typeNumeric</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">globalv_globalvars</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]):</span>
+        <span class="n">decl</span> <span class="o">=</span> <span class="n">globalv_globalvars</span><span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="n">decl</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TypeDef&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">typeNumeric</span><span class="p">(</span><span class="n">decl</span><span class="p">[</span><span class="s">&#39;tdtype&#39;</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;TAdd&#39;</span><span class="p">,</span> <span class="s">&#39;TSub&#39;</span><span class="p">,</span> <span class="s">&#39;TMul&#39;</span><span class="p">,</span> <span class="s">&#39;TDiv&#39;</span><span class="p">,</span> <span class="s">&#39;TLog&#39;</span><span class="p">,</span> <span class="s">&#39;TExp&#39;</span><span class="p">,</span> <span class="s">&#39;TMax&#39;</span><span class="p">,</span> <span class="s">&#39;TMin&#39;</span><span class="p">]:</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">typeNumeric</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TAdd&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TSub&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TMul&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TDiv&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TLog&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TExp&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TMax&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TMax&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="typeCName"><a class="viewcode-back" href="../python/cppgen.html#cppgen.typeCName">[docs]</a><span class="k">def</span> <span class="nf">typeCName</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">generatedVectors</span>
+    <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Type&#39;</span><span class="p">:</span>
+        <span class="n">cid</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cid</span> <span class="o">==</span> <span class="s">&#39;Bit&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">typeNumeric</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">32</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s">&#39;uint32_t&#39;</span>
+            <span class="k">elif</span> <span class="n">typeNumeric</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">64</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s">&#39;uint64_t&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s">&#39;std::bitset&lt;</span><span class="si">%d</span><span class="s">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">typeNumeric</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="k">elif</span> <span class="n">cid</span> <span class="o">==</span> <span class="s">&#39;Bool&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;int&#39;</span>
+        <span class="k">elif</span> <span class="n">cid</span> <span class="o">==</span> <span class="s">&#39;Int&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">typeNumeric</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">32</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s">&#39;int&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">cid</span> <span class="o">==</span> <span class="s">&#39;UInt&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">typeNumeric</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">32</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s">&#39;unsigned int&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">cid</span> <span class="o">==</span> <span class="s">&#39;Float&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;float&#39;</span>
+        <span class="k">elif</span> <span class="n">cid</span> <span class="o">==</span> <span class="s">&#39;Vector&#39;</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="n">typeNumeric</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="n">typeCName</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])]</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generatedVectors</span><span class="p">:</span>
+                <span class="n">generatedVectors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s">&#39;bsvvector_L</span><span class="si">%s</span><span class="s">_L</span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">cid</span> <span class="o">==</span> <span class="s">&#39;Action&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;int&#39;</span>
+        <span class="k">elif</span> <span class="n">cid</span> <span class="o">==</span> <span class="s">&#39;ActionValue&#39;</span><span class="p">:</span>
+            <span class="k">assert</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">]:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">L_</span><span class="si">%s</span><span class="s">_P&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cid</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">typeCName</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">t</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">cid</span>
+        <span class="k">return</span> <span class="n">name</span>
+    <span class="k">return</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="hasBitWidth"><a class="viewcode-back" href="../python/cppgen.html#cppgen.hasBitWidth">[docs]</a><span class="k">def</span> <span class="nf">hasBitWidth</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Bit&#39;</span> <span class="ow">or</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Int&#39;</span> <span class="ow">or</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;UInt&#39;</span>
+</div>
+<div class="viewcode-block" id="getNumeric"><a class="viewcode-back" href="../python/cppgen.html#cppgen.getNumeric">[docs]</a><span class="k">def</span> <span class="nf">getNumeric</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+   <span class="k">if</span> <span class="n">globalv_globalvars</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]):</span>
+       <span class="n">decl</span> <span class="o">=</span> <span class="n">globalv_globalvars</span><span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]]</span>
+       <span class="k">if</span> <span class="n">decl</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TypeDef&#39;</span><span class="p">:</span>
+           <span class="k">return</span> <span class="n">getNumeric</span><span class="p">(</span><span class="n">decl</span><span class="p">[</span><span class="s">&#39;tdtype&#39;</span><span class="p">])</span>
+   <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;TAdd&#39;</span><span class="p">,</span> <span class="s">&#39;TSub&#39;</span><span class="p">,</span> <span class="s">&#39;TMul&#39;</span><span class="p">,</span> <span class="s">&#39;TDiv&#39;</span><span class="p">,</span> <span class="s">&#39;TLog&#39;</span><span class="p">,</span> <span class="s">&#39;TExp&#39;</span><span class="p">,</span> <span class="s">&#39;TMax&#39;</span><span class="p">,</span> <span class="s">&#39;TMin&#39;</span><span class="p">]:</span>
+       <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">getNumeric</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">]]</span>
+       <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TAdd&#39;</span><span class="p">:</span>
+           <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+       <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TSub&#39;</span><span class="p">:</span>
+           <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+       <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TMul&#39;</span><span class="p">:</span>
+           <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+       <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TDiv&#39;</span><span class="p">:</span>
+           <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+       <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TLog&#39;</span><span class="p">:</span>
+           <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+       <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TExp&#39;</span><span class="p">:</span>
+           <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+       <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TMax&#39;</span><span class="p">:</span>
+           <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+       <span class="k">elif</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TMax&#39;</span><span class="p">:</span>
+           <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+   <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="typeBitWidth"><a class="viewcode-back" href="../python/cppgen.html#cppgen.typeBitWidth">[docs]</a><span class="k">def</span> <span class="nf">typeBitWidth</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">hasBitWidth</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
+        <span class="k">while</span> <span class="n">globalv_globalvars</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">width</span><span class="p">):</span>
+            <span class="n">decl</span> <span class="o">=</span> <span class="n">globalv_globalvars</span><span class="p">[</span><span class="n">width</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">decl</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;TypeDef&#39;</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">print</span> <span class="s">&#39;Resolving width&#39;</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">decl</span><span class="p">[</span><span class="s">&#39;tdtype&#39;</span><span class="p">]</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="n">decl</span><span class="p">[</span><span class="s">&#39;tdtype&#39;</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s">&#39;[0-9]+&#39;</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">getNumeric</span><span class="p">(</span><span class="n">decl</span><span class="p">[</span><span class="s">&#39;tdtype&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Bool&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Float&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">32</span>
+    <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Enum&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;elements&#39;</span><span class="p">]))))</span>
+    <span class="k">return</span> <span class="mi">0</span>
+
+<span class="c"># pack flattened struct-member list into 32-bit wide bins.  If a type is wider than 32-bits or</span>
+<span class="c"># crosses a 32-bit boundary, it will appear in more than one bin (though with different ranges).</span>
+<span class="c"># This is intended to mimick exactly Bluespec struct packing.  The padding must match the code</span>
+<span class="c"># in Adapter.bsv.  the argument s is a list of bins, atoms is the flattened list, and pro represents</span>
+<span class="c"># the number of bits already consumed from atoms[0].</span></div>
+<div class="viewcode-block" id="accumWords"><a class="viewcode-back" href="../python/cppgen.html#cppgen.accumWords">[docs]</a><span class="k">def</span> <span class="nf">accumWords</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">pro</span><span class="p">,</span> <span class="n">memberList</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">memberList</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+             <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+             <span class="k">return</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">shifted</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">s</span><span class="p">])</span>
+    <span class="n">mitem</span> <span class="o">=</span> <span class="n">memberList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">mitem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">thisType</span> <span class="o">=</span> <span class="n">mitem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">aw</span> <span class="o">=</span> <span class="n">typeBitWidth</span><span class="p">(</span><span class="n">thisType</span><span class="p">)</span>
+    <span class="c">#print &#39;%d %d %d&#39; %(aw, pro, w)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">aw</span><span class="o">-</span><span class="n">pro</span><span class="o">+</span><span class="n">w</span> <span class="o">==</span> <span class="mi">32</span><span class="p">):</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">paramInfo</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">aw</span><span class="p">,</span><span class="n">pro</span><span class="p">,</span><span class="n">thisType</span><span class="p">,</span><span class="s">&#39;=&#39;</span><span class="p">))</span>
+        <span class="c">#print &#39;%s (0)&#39;% (name)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">+</span><span class="n">accumWords</span><span class="p">([],</span><span class="mi">0</span><span class="p">,</span><span class="n">memberList</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">aw</span><span class="o">-</span><span class="n">pro</span><span class="o">+</span><span class="n">w</span> <span class="o">&lt;</span> <span class="mi">32</span><span class="p">):</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">paramInfo</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">aw</span><span class="p">,</span><span class="n">pro</span><span class="p">,</span><span class="n">thisType</span><span class="p">,</span><span class="s">&#39;=&#39;</span><span class="p">))</span>
+        <span class="c">#print &#39;%s (1)&#39;% (name)</span>
+        <span class="k">return</span> <span class="n">accumWords</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">memberList</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">paramInfo</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">pro</span><span class="o">+</span><span class="p">(</span><span class="mi">32</span><span class="o">-</span><span class="n">w</span><span class="p">),</span><span class="n">pro</span><span class="p">,</span><span class="n">thisType</span><span class="p">,</span><span class="s">&#39;|=&#39;</span><span class="p">))</span>
+        <span class="c">#print &#39;%s (2)&#39;% (name)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">+</span><span class="n">accumWords</span><span class="p">([],</span><span class="n">pro</span><span class="o">+</span><span class="p">(</span><span class="mi">32</span><span class="o">-</span><span class="n">w</span><span class="p">),</span> <span class="n">memberList</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="generate_marshall"><a class="viewcode-back" href="../python/cppgen.html#cppgen.generate_marshall">[docs]</a><span class="k">def</span> <span class="nf">generate_marshall</span><span class="p">(</span><span class="n">pfmt</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">fdName</span>
+    <span class="n">off</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">word</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">fmt</span> <span class="o">=</span> <span class="n">pfmt</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">w</span><span class="p">:</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="n">typeCName</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">datatype</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#39;float&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pfmt</span> <span class="o">%</span> <span class="p">(</span><span class="s">&#39;*(int*)&amp;&#39;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">shifted</span><span class="p">:</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="s">&#39;(</span><span class="si">%s</span><span class="s">&gt;&gt;</span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">shifted</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">off</span><span class="p">:</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="s">&#39;(</span><span class="si">%s</span><span class="s">&lt;&lt;</span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">off</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">typeBitWidth</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">datatype</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">64</span><span class="p">:</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="s">&#39;(const </span><span class="si">%s</span><span class="s"> &amp; std::bitset&lt;</span><span class="si">%d</span><span class="s">&gt;(0xFFFFFFFF)).to_ulong()&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">typeBitWidth</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">datatype</span><span class="p">))</span>
+        <span class="n">word</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+        <span class="n">off</span> <span class="o">=</span> <span class="n">off</span><span class="o">+</span><span class="n">e</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="n">e</span><span class="o">.</span><span class="n">shifted</span>
+        <span class="k">if</span> <span class="n">typeCName</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">datatype</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#39;SpecialTypeForSendingFd&#39;</span><span class="p">:</span>
+            <span class="n">fdName</span> <span class="o">=</span> <span class="n">field</span>
+            <span class="n">fmt</span> <span class="o">=</span> <span class="s">&#39;p-&gt;item-&gt;writefd(p, &amp;temp_working_addr, </span><span class="si">%s</span><span class="s">);&#39;</span>
+    <span class="k">return</span> <span class="n">fmt</span> <span class="o">%</span> <span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">intersperse</span><span class="p">(</span><span class="s">&#39;|&#39;</span><span class="p">,</span> <span class="n">word</span><span class="p">)))</span>
+</div>
+<div class="viewcode-block" id="generate_demarshall"><a class="viewcode-back" href="../python/cppgen.html#cppgen.generate_demarshall">[docs]</a><span class="k">def</span> <span class="nf">generate_demarshall</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+    <span class="n">off</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">word</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">word</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">w</span><span class="p">:</span>
+        <span class="c"># print e.name+&#39; (d)&#39;</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="s">&#39;tmp&#39;</span>
+        <span class="k">if</span> <span class="n">typeCName</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">datatype</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#39;float&#39;</span><span class="p">:</span>
+            <span class="n">word</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> = *(float*)&amp;(</span><span class="si">%s</span><span class="s">);&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="n">field</span><span class="p">))</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">off</span><span class="p">:</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">&gt;&gt;</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">off</span><span class="p">)</span>
+        <span class="c">#print &#39;JJJ&#39;, e.name, &#39;{{&#39;+field+&#39;}}&#39;, typeBitWidth(e.datatype), e.shifted, e.assignOp, off</span>
+        <span class="c">#if typeBitWidth(e.datatype) &lt; 32:</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="s">&#39;((</span><span class="si">%s</span><span class="s">)&amp;0x</span><span class="si">%x</span><span class="s">ul)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="p">((</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">typeBitWidth</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">datatype</span><span class="p">)</span><span class="o">-</span><span class="n">e</span><span class="o">.</span><span class="n">shifted</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">shifted</span><span class="p">:</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="s">&#39;((</span><span class="si">%s</span><span class="s">)(</span><span class="si">%s</span><span class="s">)&lt;&lt;</span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">typeCName</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">datatype</span><span class="p">),</span><span class="n">field</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">shifted</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">typeCName</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">datatype</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#39;SpecialTypeForSendingFd&#39;</span><span class="p">:</span>
+            <span class="n">word</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> messageFd;&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">assignOp</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">word</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> (</span><span class="si">%s</span><span class="s">)(</span><span class="si">%s</span><span class="s">);&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">assignOp</span><span class="p">,</span> <span class="n">typeCName</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">datatype</span><span class="p">),</span> <span class="n">field</span><span class="p">))</span>
+        <span class="n">off</span> <span class="o">=</span> <span class="n">off</span><span class="o">+</span><span class="n">e</span><span class="o">.</span><span class="n">width</span><span class="o">-</span><span class="n">e</span><span class="o">.</span><span class="n">shifted</span>
+    <span class="k">return</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">        &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="formalParameters"><a class="viewcode-back" href="../python/cppgen.html#cppgen.formalParameters">[docs]</a><span class="k">def</span> <span class="nf">formalParameters</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">insertPortal</span><span class="p">):</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="p">[</span> <span class="s">&#39;const </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">typeCName</span><span class="p">(</span><span class="n">pitem</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]),</span> <span class="n">pitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">pitem</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">insertPortal</span><span class="p">:</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39; struct PortalInternal *p&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="gatherMethodInfo"><a class="viewcode-back" href="../python/cppgen.html#cppgen.gatherMethodInfo">[docs]</a><span class="k">def</span> <span class="nf">gatherMethodInfo</span><span class="p">(</span><span class="n">mname</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">itemname</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">fdName</span>
+
+    <span class="n">argAtoms</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">collectMembers</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">),</span> <span class="n">params</span><span class="p">),</span> <span class="p">[])</span>
+    <span class="n">argAtoms</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+    <span class="n">argWords</span>  <span class="o">=</span> <span class="n">accumWords</span><span class="p">([],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">argAtoms</span><span class="p">)</span>
+    <span class="n">fdName</span> <span class="o">=</span> <span class="s">&#39;-1&#39;</span>
+
+    <span class="n">paramStructMarshallStr</span> <span class="o">=</span> <span class="s">&#39;p-&gt;item-&gt;write(p, &amp;temp_working_addr, </span><span class="si">%s</span><span class="s">);&#39;</span>
+    <span class="n">paramStructDemarshallStr</span> <span class="o">=</span> <span class="s">&#39;tmp = p-&gt;item-&gt;read(p, &amp;temp_working_addr);&#39;</span>
+
+    <span class="k">if</span> <span class="n">argWords</span> <span class="o">==</span> <span class="p">[]:</span>
+        <span class="n">paramStructMarshall</span> <span class="o">=</span> <span class="p">[</span><span class="n">paramStructMarshallStr</span> <span class="o">%</span> <span class="s">&#39;0&#39;</span><span class="p">]</span>
+        <span class="n">paramStructDemarshall</span> <span class="o">=</span> <span class="p">[</span><span class="n">paramStructDemarshallStr</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">paramStructMarshall</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">generate_marshall</span><span class="p">,</span> <span class="n">paramStructMarshallStr</span><span class="p">),</span> <span class="n">argWords</span><span class="p">)</span>
+        <span class="n">paramStructMarshall</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+        <span class="n">paramStructDemarshall</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">generate_demarshall</span><span class="p">,</span> <span class="n">paramStructDemarshallStr</span><span class="p">),</span> <span class="n">argWords</span><span class="p">)</span>
+        <span class="n">paramStructDemarshall</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+
+    <span class="n">paramStructDeclarations</span> <span class="o">=</span> <span class="p">[</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">typeCName</span><span class="p">(</span><span class="n">pitem</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]),</span> <span class="n">pitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">pitem</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
+        <span class="n">paramStructDeclarations</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;        int padding;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">]</span>
+    <span class="n">respParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">pitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">pitem</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
+    <span class="n">respParams</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;p&#39;</span><span class="p">)</span>
+    <span class="n">substs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;methodName&#39;</span><span class="p">:</span> <span class="n">cName</span><span class="p">(</span><span class="n">mname</span><span class="p">),</span>
+        <span class="s">&#39;paramDeclarations&#39;</span><span class="p">:</span> <span class="n">formalParameters</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="bp">False</span><span class="p">),</span>
+        <span class="s">&#39;paramProxyDeclarations&#39;</span><span class="p">:</span> <span class="n">formalParameters</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span>
+        <span class="s">&#39;paramStructDeclarations&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">        &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paramStructDeclarations</span><span class="p">),</span>
+        <span class="s">&#39;paramStructMarshall&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">    &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paramStructMarshall</span><span class="p">),</span>
+        <span class="s">&#39;paramStructDemarshall&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">        &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paramStructDemarshall</span><span class="p">),</span>
+        <span class="s">&#39;paramNames&#39;</span><span class="p">:</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;msg-&gt;</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">pitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">pitem</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]),</span>
+        <span class="s">&#39;wordLen&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">argWords</span><span class="p">),</span>
+        <span class="s">&#39;wordLenP1&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">argWords</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s">&#39;fdName&#39;</span><span class="p">:</span> <span class="n">fdName</span><span class="p">,</span>
+        <span class="s">&#39;className&#39;</span><span class="p">:</span> <span class="n">cName</span><span class="p">(</span><span class="n">itemname</span><span class="p">),</span>
+        <span class="s">&#39;channelNumber&#39;</span><span class="p">:</span> <span class="s">&#39;CHAN_NUM_</span><span class="si">%s</span><span class="s">_</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cName</span><span class="p">(</span><span class="n">itemname</span><span class="p">),</span> <span class="n">cName</span><span class="p">(</span><span class="n">mname</span><span class="p">)),</span>
+        <span class="s">&#39;responseCase&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;((</span><span class="si">%(className)s</span><span class="s">Cb *)p-&gt;cb)-&gt;</span><span class="si">%(name)s</span><span class="s">(</span><span class="si">%(params)s</span><span class="s">);&#39;</span>
+                          <span class="o">%</span> <span class="p">{</span> <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">mname</span><span class="p">,</span>
+                              <span class="s">&#39;className&#39;</span> <span class="p">:</span> <span class="n">cName</span><span class="p">(</span><span class="n">itemname</span><span class="p">),</span>
+                              <span class="s">&#39;params&#39;</span><span class="p">:</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">respParams</span><span class="p">)})</span>
+        <span class="p">}</span>
+    <span class="k">return</span> <span class="n">substs</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">argWords</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="emitMethodDeclaration"><a class="viewcode-back" href="../python/cppgen.html#cppgen.emitMethodDeclaration">[docs]</a><span class="k">def</span> <span class="nf">emitMethodDeclaration</span><span class="p">(</span><span class="n">mname</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">className</span><span class="p">):</span>
+    <span class="n">paramValues</span> <span class="o">=</span> <span class="p">[</span><span class="n">pitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">pitem</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
+    <span class="n">paramValues</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;&amp;pint&#39;</span><span class="p">)</span>
+    <span class="n">methodName</span> <span class="o">=</span> <span class="n">cName</span><span class="p">(</span><span class="n">mname</span><span class="p">)</span>
+    <span class="n">indent</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">className</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;virtual void&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;int&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&#39; </span><span class="si">%s</span><span class="s"> ( &#39;</span> <span class="o">%</span> <span class="n">methodName</span><span class="p">)</span> <span class="o">+</span> <span class="n">formalParameters</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; ) &#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">className</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;= 0;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;{ return </span><span class="si">%s</span><span class="s">_</span><span class="si">%s</span><span class="s"> (&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">className</span><span class="p">,</span> <span class="n">methodName</span><span class="p">))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">paramValues</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;); };</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="generate_class"><a class="viewcode-back" href="../python/cppgen.html#cppgen.generate_class">[docs]</a><span class="k">def</span> <span class="nf">generate_class</span><span class="p">(</span><span class="n">className</span><span class="p">,</span> <span class="n">declList</span><span class="p">,</span> <span class="n">parentC</span><span class="p">,</span> <span class="n">parentCC</span><span class="p">,</span> <span class="n">generatedCFiles</span><span class="p">,</span> <span class="n">create_cpp_file</span><span class="p">,</span> <span class="n">generated_hpp</span><span class="p">,</span> <span class="n">generated_cpp</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">generatedVectors</span>
+    <span class="n">classCName</span> <span class="o">=</span> <span class="n">cName</span><span class="p">(</span><span class="n">className</span><span class="p">)</span>
+    <span class="n">cppname</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">.c&#39;</span> <span class="o">%</span> <span class="n">className</span>
+    <span class="n">hppname</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">.h&#39;</span> <span class="o">%</span> <span class="n">className</span>
+    <span class="k">if</span> <span class="n">cppname</span> <span class="ow">in</span> <span class="n">generatedCFiles</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">generatedCFiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cppname</span><span class="p">)</span>
+    <span class="n">hpp</span> <span class="o">=</span> <span class="n">create_cpp_file</span><span class="p">(</span><span class="n">hppname</span><span class="p">)</span>
+    <span class="n">cpp</span> <span class="o">=</span> <span class="n">create_cpp_file</span><span class="p">(</span><span class="n">cppname</span><span class="p">)</span>
+    <span class="n">hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#ifndef _</span><span class="si">%(name)s</span><span class="s">_H_</span><span class="se">\n</span><span class="s">#define _</span><span class="si">%(name)s</span><span class="s">_H_</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">className</span><span class="o">.</span><span class="n">upper</span><span class="p">()})</span>
+    <span class="n">hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#include &quot;</span><span class="si">%s</span><span class="s">.h&quot;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">parentC</span><span class="p">)</span>
+    <span class="n">generated_cpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">/************** Start of </span><span class="si">%s</span><span class="s">Wrapper CPP ***********/</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">className</span><span class="p">)</span>
+    <span class="n">generated_cpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#include &quot;</span><span class="si">%s</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">hppname</span><span class="p">)</span>
+    <span class="n">maxSize</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">reqChanNums</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">mitem</span> <span class="ow">in</span> <span class="n">declList</span><span class="p">:</span>
+        <span class="n">substs</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">gatherMethodInfo</span><span class="p">(</span><span class="n">mitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span> <span class="n">mitem</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">],</span> <span class="n">className</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="n">maxSize</span><span class="p">:</span>
+            <span class="n">maxSize</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="n">cpp</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="n">proxyMethodTemplateDecl</span> <span class="o">+</span> <span class="n">proxyMethodTemplate</span><span class="p">)</span> <span class="o">%</span> <span class="n">substs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">generatedVectors</span><span class="p">:</span>
+            <span class="c">#&#39;Vector&#39;</span>
+            <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">typedef </span><span class="si">%s</span><span class="s"> bsvvector_L</span><span class="si">%s</span><span class="s">_L</span><span class="si">%d</span><span class="s">[</span><span class="si">%d</span><span class="s">];&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">generatedVectors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="n">proxyMethodTemplateDecl</span> <span class="o">%</span> <span class="n">substs</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;;&#39;</span><span class="p">)</span>
+        <span class="n">reqChanNums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">substs</span><span class="p">[</span><span class="s">&#39;channelNumber&#39;</span><span class="p">])</span>
+    <span class="n">subs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;className&#39;</span><span class="p">:</span> <span class="n">classCName</span><span class="p">,</span> <span class="s">&#39;maxSize&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">maxSize</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">sizeofUint32_t</span><span class="p">,</span> <span class="s">&#39;parentClass&#39;</span><span class="p">:</span> <span class="n">parentCC</span><span class="p">,</span> \
+            <span class="s">&#39;reqInfo&#39;</span><span class="p">:</span> <span class="s">&#39;0x</span><span class="si">%x</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">declList</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">maxSize</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">sizeofUint32_t</span><span class="p">)</span> <span class="p">}</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">enum { &#39;</span> <span class="o">+</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">reqChanNums</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;};</span><span class="se">\n</span><span class="s">#define </span><span class="si">%(className)s</span><span class="s">_reqinfo </span><span class="si">%(reqInfo)s</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">subs</span><span class="p">)</span>
+    <span class="n">hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">proxyClassPrefixTemplate</span> <span class="o">%</span> <span class="n">subs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">mitem</span> <span class="ow">in</span> <span class="n">declList</span><span class="p">:</span>
+        <span class="n">emitMethodDeclaration</span><span class="p">(</span><span class="n">mitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span> <span class="n">mitem</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">],</span> <span class="n">hpp</span><span class="p">,</span> <span class="n">classCName</span><span class="p">)</span>
+    <span class="n">hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;};</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">cpp</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="n">handleMessageTemplateDecl</span> <span class="o">%</span> <span class="n">subs</span><span class="p">))</span>
+    <span class="n">cpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">handleMessageTemplate1</span> <span class="o">%</span> <span class="n">subs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">mitem</span> <span class="ow">in</span> <span class="n">declList</span><span class="p">:</span>
+        <span class="n">substs</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">gatherMethodInfo</span><span class="p">(</span><span class="n">mitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span> <span class="n">mitem</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">],</span> <span class="n">className</span><span class="p">)</span>
+        <span class="n">cpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">handleMessageCase</span> <span class="o">%</span> <span class="n">substs</span><span class="p">)</span>
+    <span class="n">cpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">handleMessageTemplate2</span> <span class="o">%</span> <span class="n">subs</span><span class="p">)</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="n">handleMessageTemplateDecl</span> <span class="o">%</span> <span class="n">subs</span><span class="p">)</span><span class="o">+</span> <span class="s">&#39;;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">wrapperClassPrefixTemplate</span> <span class="o">%</span> <span class="n">subs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">mitem</span> <span class="ow">in</span> <span class="n">declList</span><span class="p">:</span>
+        <span class="n">emitMethodDeclaration</span><span class="p">(</span><span class="n">mitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span> <span class="n">mitem</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">],</span> <span class="n">hpp</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;};</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;typedef struct {</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">mitem</span> <span class="ow">in</span> <span class="n">declList</span><span class="p">:</span>
+        <span class="n">paramValues</span> <span class="o">=</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">pitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">pitem</span> <span class="ow">in</span> <span class="n">mitem</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">]])</span>
+        <span class="n">formalParamStr</span> <span class="o">=</span> <span class="n">formalParameters</span><span class="p">(</span><span class="n">mitem</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">],</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="n">methodName</span> <span class="o">=</span> <span class="n">cName</span><span class="p">(</span><span class="n">mitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span>
+        <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&#39;    void (*</span><span class="si">%s</span><span class="s">) ( &#39;</span> <span class="o">%</span> <span class="n">methodName</span><span class="p">)</span> <span class="o">+</span> <span class="n">formalParamStr</span> <span class="o">+</span> <span class="s">&#39; );</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="n">generated_cpp</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&#39;void </span><span class="si">%s%s</span><span class="s">_cb ( &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">classCName</span><span class="p">,</span> <span class="n">methodName</span><span class="p">))</span> <span class="o">+</span> <span class="n">formalParamStr</span> <span class="o">+</span> <span class="s">&#39; ) {</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="n">indent</span><span class="p">(</span><span class="n">generated_cpp</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">generated_cpp</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s">&#39;(static_cast&lt;</span><span class="si">%s</span><span class="s">Wrapper *&gt;(p-&gt;parent))-&gt;</span><span class="si">%s</span><span class="s"> ( &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">classCName</span><span class="p">,</span> <span class="n">methodName</span><span class="p">))</span> <span class="o">+</span> <span class="n">paramValues</span> <span class="o">+</span> <span class="s">&#39;);</span><span class="se">\n</span><span class="s">};</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;} </span><span class="si">%s</span><span class="s">Cb;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">classCName</span><span class="p">)</span>
+    <span class="n">generated_cpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">Cb </span><span class="si">%s</span><span class="s">_cbTable = {</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">classCName</span><span class="p">,</span> <span class="n">classCName</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">mitem</span> <span class="ow">in</span> <span class="n">declList</span><span class="p">:</span>
+        <span class="n">generated_cpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;    </span><span class="si">%s%s</span><span class="s">_cb,</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">classCName</span><span class="p">,</span> <span class="n">mitem</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]))</span>
+    <span class="n">generated_cpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;};</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#endif // _</span><span class="si">%(name)s</span><span class="s">_H_</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">className</span><span class="o">.</span><span class="n">upper</span><span class="p">()})</span>
+    <span class="n">hpp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">cpp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="emitStructMember"><a class="viewcode-back" href="../python/cppgen.html#cppgen.emitStructMember">[docs]</a><span class="k">def</span> <span class="nf">emitStructMember</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indentation</span><span class="p">):</span>
+    <span class="n">indent</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">indentation</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">typeCName</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]),</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="n">hasBitWidth</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]):</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39; : </span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">typeBitWidth</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]))</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="emitStruct"><a class="viewcode-back" href="../python/cppgen.html#cppgen.emitStruct">[docs]</a><span class="k">def</span> <span class="nf">emitStruct</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indentation</span><span class="p">):</span>
+    <span class="n">indent</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">indentation</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">indentation</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;typedef &#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;struct </span><span class="si">%s</span><span class="s"> {</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;elements&#39;</span><span class="p">]:</span>
+        <span class="n">emitStructMember</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indentation</span><span class="o">+</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">indent</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">indentation</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;}&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">indentation</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39; </span><span class="si">%s</span><span class="s">;&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="emitEnum"><a class="viewcode-back" href="../python/cppgen.html#cppgen.emitEnum">[docs]</a><span class="k">def</span> <span class="nf">emitEnum</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indentation</span><span class="p">):</span>
+    <span class="n">indent</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">indentation</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">indentation</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;typedef &#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;enum </span><span class="si">%s</span><span class="s"> { &#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">indent</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">indentation</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;elements&#39;</span><span class="p">]]))</span>
+    <span class="n">indent</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">indentation</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39; }&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">indentation</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39; </span><span class="si">%s</span><span class="s">;&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="emitCD"><a class="viewcode-back" href="../python/cppgen.html#cppgen.emitCD">[docs]</a><span class="k">def</span> <span class="nf">emitCD</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">generated_hpp</span><span class="p">,</span> <span class="n">indentation</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
+    <span class="n">td</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;tdtype&#39;</span><span class="p">]</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">td</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="s">&#39;Enum&#39;</span><span class="p">:</span>
+        <span class="n">emitEnum</span><span class="p">(</span><span class="n">td</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">generated_hpp</span><span class="p">,</span> <span class="n">indentation</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s">&#39;Struct&#39;</span><span class="p">:</span>
+        <span class="n">emitStruct</span><span class="p">(</span><span class="n">td</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">generated_hpp</span><span class="p">,</span> <span class="n">indentation</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="generate_cpp"><a class="viewcode-back" href="../python/cppgen.html#cppgen.generate_cpp">[docs]</a><span class="k">def</span> <span class="nf">generate_cpp</span><span class="p">(</span><span class="n">project_dir</span><span class="p">,</span> <span class="n">noisyFlag</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">globalv_globalvars</span>
+    <span class="k">def</span> <span class="nf">create_cpp_file</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_dir</span><span class="p">,</span> <span class="s">&#39;jni&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">createDirAndOpen</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">noisyFlag</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Writing file &quot;</span><span class="p">,</span><span class="n">fname</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#include &quot;GeneratedTypes.h&quot;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">f</span>
+
+    <span class="n">generatedCFiles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">globalv_globalvars</span> <span class="o">=</span> <span class="n">jsondata</span><span class="p">[</span><span class="s">&#39;globalvars&#39;</span><span class="p">]</span>
+    <span class="n">hname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_dir</span><span class="p">,</span> <span class="s">&#39;jni&#39;</span><span class="p">,</span> <span class="s">&#39;GeneratedTypes.h&#39;</span><span class="p">)</span>
+    <span class="n">generated_hpp</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">createDirAndOpen</span><span class="p">(</span><span class="n">hname</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#ifndef __GENERATED_TYPES__</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#define __GENERATED_TYPES__</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#include &quot;portal.h&quot;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#ifdef __cplusplus</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;extern &quot;C&quot; {</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#endif</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="c"># global type declarations used by interface mthods</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">jsondata</span><span class="p">[</span><span class="s">&#39;globaldecls&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TypeDef&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">]:</span>
+                <span class="k">print</span> <span class="s">&#39;Skipping C++ declaration for parameterized type&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
+                <span class="k">continue</span>
+            <span class="n">emitCD</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">generated_hpp</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">cppname</span> <span class="o">=</span> <span class="s">&#39;GeneratedCppCallbacks.cpp&#39;</span>
+    <span class="n">generated_cpp</span> <span class="o">=</span> <span class="n">create_cpp_file</span><span class="p">(</span><span class="n">cppname</span><span class="p">)</span>
+    <span class="n">generatedCFiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cppname</span><span class="p">)</span>
+    <span class="n">generated_cpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">#ifndef NO_CPP_PORTAL_CODE</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">jsondata</span><span class="p">[</span><span class="s">&#39;interfaces&#39;</span><span class="p">]:</span>
+        <span class="n">generate_class</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;decls&#39;</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;parentLportal&#39;</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="s">&#39;parentPortal&#39;</span><span class="p">],</span> <span class="n">generatedCFiles</span><span class="p">,</span> <span class="n">create_cpp_file</span><span class="p">,</span> <span class="n">generated_hpp</span><span class="p">,</span> <span class="n">generated_cpp</span><span class="p">)</span>
+    <span class="n">generated_cpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#endif //NO_CPP_PORTAL_CODE</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">generated_cpp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#ifdef __cplusplus</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;}</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#endif</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#endif //__GENERATED_TYPES__</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">generated_hpp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">gen_makefile</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">createDirAndOpen</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_dir</span><span class="p">,</span> <span class="s">&#39;jni&#39;</span><span class="p">,</span> <span class="s">&#39;Makefile.generated_files&#39;</span><span class="p">),</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">gen_makefile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">GENERATED_CPP=&#39;</span> <span class="o">+</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">generatedCFiles</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">gen_makefile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">generatedCFiles</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../bsv-pkgindex.html" title="Bsv Package Index"
+             >packages</a> |</li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Jamey Hicks, Myron King, John Ankcorn.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
