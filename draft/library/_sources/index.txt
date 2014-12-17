@@ -14,14 +14,12 @@ Contents:
    intro.rst
    bsv/bsv.rst
    examples/index.rst
-   python.rst
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
-* bsv:ref:`pkgindex`
-* bsv:ref:`bsvmodules`
+* :ref:`pkgindex`
 * :ref:`search`
 

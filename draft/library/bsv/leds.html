@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2. Leds Package &mdash; connectal 14.11.6 documentation</title>
+    <title>3. Leds Package &mdash; connectal 14.11.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="connectal 14.11.6 documentation" href="../index.html" />
     <link rel="up" title="Connectal BSV Libraries" href="bsv.html" />
-    <link rel="next" title="3. CtrlMux Package" href="ctrlmux.html" />
-    <link rel="prev" title="1. HostInterface Package" href="hostinterface.html" /> 
+    <link rel="next" title="4. MemPortal Package" href="memportal.html" />
+    <link rel="prev" title="2. HostInterface Package" href="hostinterface.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,10 +43,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ctrlmux.html" title="3. CtrlMux Package"
+          <a href="memportal.html" title="4. MemPortal Package"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="hostinterface.html" title="1. HostInterface Package"
+          <a href="hostinterface.html" title="2. HostInterface Package"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
           <li><a href="bsv.html" accesskey="U">Connectal BSV Libraries</a> &raquo;</li> 
@@ -59,18 +59,23 @@
           <div class="body">
             
   <div class="section" id="package-Leds">
-<span id="leds-package"></span><h1>2. Leds Package<a class="headerlink" href="#package-Leds" title="Permalink to this headline">¶</a></h1>
+<span id="leds-package"></span><h1>3. Leds Package<a class="headerlink" href="#package-Leds" title="Permalink to this headline">¶</a></h1>
 <dl class="interface">
 <dt id="Leds::LEDS">
 <em class="property">interface </em><tt class="descclassname">Leds::</tt><tt class="descname">LEDS</tt><a class="headerlink" href="#Leds::LEDS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="data">
+<dl class="typedef">
 <dt id="Leds::LedsWidth">
-<tt class="descclassname">Leds::</tt><tt class="descname">LedsWidth</tt><a class="headerlink" href="#Leds::LedsWidth" title="Permalink to this definition">¶</a></dt>
+<em class="property">typedef </em><tt class="descclassname">Leds::</tt><tt class="descname">LedsWidth</tt><a class="headerlink" href="#Leds::LedsWidth" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defined to be the number of default LEDs on the FPGA board.</p>
 <p>The Zedboard has 8, Zc706 has 4, ...</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="Leds::leds">
+<tt class="descclassname">Leds::</tt><tt class="descname">leds</tt> &rarr; Bit#(LedsWidth)<a class="headerlink" href="#Leds::leds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 
@@ -82,10 +87,10 @@
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="hostinterface.html"
-                        title="previous chapter">1. HostInterface Package</a></p>
+                        title="previous chapter">2. HostInterface Package</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="ctrlmux.html"
-                        title="next chapter">3. CtrlMux Package</a></p>
+  <p class="topless"><a href="memportal.html"
+                        title="next chapter">4. MemPortal Package</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/bsv/leds.txt"
@@ -121,10 +126,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ctrlmux.html" title="3. CtrlMux Package"
+          <a href="memportal.html" title="4. MemPortal Package"
              >next</a> |</li>
         <li class="right" >
-          <a href="hostinterface.html" title="1. HostInterface Package"
+          <a href="hostinterface.html" title="2. HostInterface Package"
              >previous</a> |</li>
         <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
           <li><a href="bsv.html" >Connectal BSV Libraries</a> &raquo;</li> 

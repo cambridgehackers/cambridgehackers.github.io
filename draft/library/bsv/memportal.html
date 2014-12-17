@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2. HostInterface Package &mdash; connectal 14.11.6 documentation</title>
+    <title>4. MemPortal Package &mdash; connectal 14.11.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="connectal 14.11.6 documentation" href="../index.html" />
     <link rel="up" title="Connectal BSV Libraries" href="bsv.html" />
-    <link rel="next" title="3. Leds Package" href="leds.html" />
-    <link rel="prev" title="1. CtrlMux Package" href="ctrlmux.html" /> 
+    <link rel="next" title="5. MemTypes Package" href="memtypes.html" />
+    <link rel="prev" title="3. Leds Package" href="leds.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,10 +43,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="leds.html" title="3. Leds Package"
+          <a href="memtypes.html" title="5. MemTypes Package"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="ctrlmux.html" title="1. CtrlMux Package"
+          <a href="leds.html" title="3. Leds Package"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
           <li><a href="bsv.html" accesskey="U">Connectal BSV Libraries</a> &raquo;</li> 
@@ -58,49 +58,14 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="hostinterface-package">
-<h1>2. HostInterface Package<a class="headerlink" href="#hostinterface-package" title="Permalink to this headline">¶</a></h1>
-<p>The HostInterface package provides host-specific typedefs and interfaces.</p>
-<span class="target" id="package-HostInterface"></span><div class="section" id="host-specific-constants">
-<h2>2.1. Host-Specific Constants<a class="headerlink" href="#host-specific-constants" title="Permalink to this headline">¶</a></h2>
-<dl class="typedef">
-<dt id="HostInterface::DataBusWidth">
-<em class="property">typedef </em><tt class="descclassname">HostInterface::</tt><tt class="descname">DataBusWidth</tt><a class="headerlink" href="#HostInterface::DataBusWidth" title="Permalink to this definition">¶</a></dt>
-<dd><p>Width in bits of the data bus connected to host shared memory.</p>
-</dd></dl>
-
-<dl class="typedef">
-<dt id="HostInterface::PhysAddrWidth">
-<em class="property">typedef </em><tt class="descclassname">HostInterface::</tt><tt class="descname">PhysAddrWidth</tt><a class="headerlink" href="#HostInterface::PhysAddrWidth" title="Permalink to this definition">¶</a></dt>
-<dd><p>Width in bits of physical addresses on the data bus connected to host shared memory.</p>
-</dd></dl>
-
-<dl class="typedef">
-<dt id="HostInterface::NumberOfMasters">
-<em class="property">typedef </em><tt class="descclassname">HostInterface::</tt><tt class="descname">NumberOfMasters</tt><a class="headerlink" href="#HostInterface::NumberOfMasters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of memory interfaces used for connecting to host shared memory.</p>
-</dd></dl>
-
-</div>
-<div class="section" id="host-specific-interfaces">
-<h2>2.2. Host-Specific Interfaces<a class="headerlink" href="#host-specific-interfaces" title="Permalink to this headline">¶</a></h2>
-<dl class="interface">
-<dt id="HostInterface::BsimHost">
-<em class="property">interface </em><tt class="descclassname">HostInterface::</tt><tt class="descname">BsimHost</tt><a class="headerlink" href="#HostInterface::BsimHost" title="Permalink to this definition">¶</a></dt>
-<dd><p>Host interface for the bluesim platform</p>
-</dd></dl>
-
-<dl class="interface">
-<dt id="HostInterface::PcieHost">
-<em class="property">interface </em><tt class="descclassname">HostInterface::</tt><tt class="descname">PcieHost</tt><a class="headerlink" href="#HostInterface::PcieHost" title="Permalink to this definition">¶</a></dt>
-<dd><p>Host interface for PCIe-attached FPGAs such as vc707 and kc705</p>
-</dd></dl>
-
-<dl class="interface">
-<dt id="HostInterface::ZynqHost">
-<em class="property">interface </em><tt class="descclassname">HostInterface::</tt><tt class="descname">ZynqHost</tt><a class="headerlink" href="#HostInterface::ZynqHost" title="Permalink to this definition">¶</a></dt>
-<dd><p>Host interface for Zynq FPGAs such as zedboard, zc702, zc706, and zybo.</p>
-<p>The Zc706 is a ZynqHost even when it is plugged into a PCIe slot.</p>
+  <div class="section" id="memportal-package">
+<h1>4. MemPortal Package<a class="headerlink" href="#memportal-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="mkmemportal-module">
+<h2>4.1. mkMemPortal Module<a class="headerlink" href="#mkmemportal-module" title="Permalink to this headline">¶</a></h2>
+<dl class="module">
+<dt id="mkMemPortal">
+<em class="property">module </em><tt class="descname">mkMemPortal</tt><big>(</big><em>Bit#(slaveDataWidth) ifcId</em>, <em>PipePortal#(numRequests</em>, <em>numIndications</em>, <em>slaveDataWidth) portal</em><big>)</big> &rarr; (MemPortal#(slaveAddrWidth, slaveDataWidth)<a class="headerlink" href="#mkMemPortal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes an interface identifier and a PipePortal and returns a MemPortal.</p>
 </dd></dl>
 
 </div>
@@ -114,22 +79,21 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">2. HostInterface Package</a><ul>
-<li><a class="reference internal" href="#host-specific-constants">2.1. Host-Specific Constants</a></li>
-<li><a class="reference internal" href="#host-specific-interfaces">2.2. Host-Specific Interfaces</a></li>
+<li><a class="reference internal" href="#">4. MemPortal Package</a><ul>
+<li><a class="reference internal" href="#mkmemportal-module">4.1. mkMemPortal Module</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="ctrlmux.html"
-                        title="previous chapter">1. CtrlMux Package</a></p>
-  <h4>Next topic</h4>
   <p class="topless"><a href="leds.html"
-                        title="next chapter">3. Leds Package</a></p>
+                        title="previous chapter">3. Leds Package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="memtypes.html"
+                        title="next chapter">5. MemTypes Package</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/bsv/hostinterface.txt"
+    <li><a href="../_sources/bsv/memportal.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -162,10 +126,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="leds.html" title="3. Leds Package"
+          <a href="memtypes.html" title="5. MemTypes Package"
              >next</a> |</li>
         <li class="right" >
-          <a href="ctrlmux.html" title="1. CtrlMux Package"
+          <a href="leds.html" title="3. Leds Package"
              >previous</a> |</li>
         <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
           <li><a href="bsv.html" >Connectal BSV Libraries</a> &raquo;</li> 

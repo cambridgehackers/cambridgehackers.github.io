@@ -12,6 +12,8 @@ discover_tcp
       connect_with_adb
       detect_network
       do_work
+      do_work_kqueue
+      do_work_poll
       int2ip
       ip2int
       open_adb_socket

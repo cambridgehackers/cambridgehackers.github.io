@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3. CtrlMux Package &mdash; connectal 14.11.6 documentation</title>
+    <title>1. CtrlMux Package &mdash; connectal 14.11.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="connectal 14.11.6 documentation" href="../index.html" />
     <link rel="up" title="Connectal BSV Libraries" href="bsv.html" />
-    <link rel="next" title="4. Portal Package" href="portal.html" />
-    <link rel="prev" title="2. Leds Package" href="leds.html" /> 
+    <link rel="next" title="2. HostInterface Package" href="hostinterface.html" />
+    <link rel="prev" title="Connectal BSV Libraries" href="bsv.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,10 +43,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="portal.html" title="4. Portal Package"
+          <a href="hostinterface.html" title="2. HostInterface Package"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="leds.html" title="2. Leds Package"
+          <a href="bsv.html" title="Connectal BSV Libraries"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
           <li><a href="bsv.html" accesskey="U">Connectal BSV Libraries</a> &raquo;</li> 
@@ -59,16 +59,16 @@
           <div class="body">
             
   <div class="section" id="package-CtrlMux">
-<span id="ctrlmux-package"></span><h1>3. CtrlMux Package<a class="headerlink" href="#package-CtrlMux" title="Permalink to this headline">¶</a></h1>
+<span id="ctrlmux-package"></span><h1>1. CtrlMux Package<a class="headerlink" href="#package-CtrlMux" title="Permalink to this headline">¶</a></h1>
 <dl class="module">
 <dt id="CtrlMux::mkInterruptMux">
-<tt class="descclassname">CtrlMux::</tt><tt class="descname">mkInterruptMux</tt><a class="headerlink" href="#CtrlMux::mkInterruptMux" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used by BsimTop, PcieTop, and ZynqTop</p>
+<em class="property">module </em><tt class="descclassname">CtrlMux::</tt><tt class="descname">mkInterruptMux</tt><big>(</big><em>Vector#(numPortals</em>, <em>MemPortal#(aw</em>, <em>dataWidth)) portals</em><big>)</big> &rarr; (ReadOnly#(Bool)<a class="headerlink" href="#CtrlMux::mkInterruptMux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used by BsimTop, PcieTop, and ZynqTop. Takes a vector of MemPortals and returns a boolean indicating whether any of the portals has indication method data available.</p>
 </dd></dl>
 
 <dl class="module">
 <dt id="CtrlMux::mkSlaveMux">
-<tt class="descclassname">CtrlMux::</tt><tt class="descname">mkSlaveMux</tt> &rarr; PhysMemSlave#(addrWidth,dataWidth)<a class="headerlink" href="#CtrlMux::mkSlaveMux" title="Permalink to this definition">¶</a></dt>
+<em class="property">module </em><tt class="descclassname">CtrlMux::</tt><tt class="descname">mkSlaveMux</tt><big>(</big><em>Vector#(numPortals</em>, <em>MemPortal#(aw</em>, <em>dataWidth)) portals</em><big>)</big> &rarr; (PhysMemSlave#(addrWidth,dataWidth)<a class="headerlink" href="#CtrlMux::mkSlaveMux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes a vector of MemPortals and returns a PhysMemSlave combining them.</p>
 </dd></dl>
 
@@ -81,11 +81,11 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="leds.html"
-                        title="previous chapter">2. Leds Package</a></p>
+  <p class="topless"><a href="bsv.html"
+                        title="previous chapter">Connectal BSV Libraries</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="portal.html"
-                        title="next chapter">4. Portal Package</a></p>
+  <p class="topless"><a href="hostinterface.html"
+                        title="next chapter">2. HostInterface Package</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/bsv/ctrlmux.txt"
@@ -121,10 +121,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="portal.html" title="4. Portal Package"
+          <a href="hostinterface.html" title="2. HostInterface Package"
              >next</a> |</li>
         <li class="right" >
-          <a href="leds.html" title="2. Leds Package"
+          <a href="bsv.html" title="Connectal BSV Libraries"
              >previous</a> |</li>
         <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
           <li><a href="bsv.html" >Connectal BSV Libraries</a> &raquo;</li> 

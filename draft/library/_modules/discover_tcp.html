@@ -123,7 +123,7 @@
     <span class="n">sock</span><span class="o">.</span><span class="n">connect_ex</span><span class="p">((</span><span class="n">dest_addr</span><span class="p">,</span><span class="mi">5555</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">sock</span>
 </div>
-<div class="viewcode-block" id="do_work"><a class="viewcode-back" href="../python/discover_tcp.html#discover_tcp.do_work">[docs]</a><span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+<div class="viewcode-block" id="do_work_poll"><a class="viewcode-back" href="../python/discover_tcp.html#discover_tcp.do_work_poll">[docs]</a><span class="k">def</span> <span class="nf">do_work_poll</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
     <span class="k">print</span> <span class="s">&quot;scanning &quot;</span><span class="o">+</span><span class="n">int2ip</span><span class="p">(</span><span class="n">start</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; to &quot;</span><span class="o">+</span><span class="n">int2ip</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
     <span class="n">connected</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">total</span> <span class="o">=</span> <span class="n">end</span><span class="o">-</span><span class="n">start</span>
@@ -163,11 +163,56 @@
     <span class="k">print</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">connected</span><span class="p">:</span>
         <span class="n">connect_with_adb</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="do_work_kqueue"><a class="viewcode-back" href="../python/discover_tcp.html#discover_tcp.do_work_kqueue">[docs]</a><span class="k">def</span> <span class="nf">do_work_kqueue</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&quot;scanning &quot;</span><span class="o">+</span><span class="n">int2ip</span><span class="p">(</span><span class="n">start</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; to &quot;</span><span class="o">+</span><span class="n">int2ip</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+    <span class="n">connected</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">end</span><span class="o">-</span><span class="n">start</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">):</span>
+
+        <span class="n">kq</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">kqueue</span><span class="p">()</span>
+        <span class="n">fd_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">kevents</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">open_adb_socket</span><span class="p">(</span><span class="n">int2ip</span><span class="p">(</span><span class="n">start</span><span class="p">))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fd_map</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">fileno</span><span class="p">()]</span> <span class="o">=</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="n">s</span><span class="p">)</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="n">start</span><span class="o">+</span><span class="mi">1</span>
+                <span class="n">kevents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">select</span><span class="o">.</span><span class="n">kevent</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="nb">filter</span><span class="o">=</span><span class="n">select</span><span class="o">.</span><span class="n">KQ_FILTER_WRITE</span><span class="p">))</span>
+
+        <span class="n">kq</span><span class="o">.</span><span class="n">control</span><span class="p">(</span><span class="n">kevents</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kq</span><span class="o">.</span><span class="n">control</span><span class="p">([],</span><span class="nb">len</span><span class="p">(</span><span class="n">kevents</span><span class="p">),</span><span class="mf">0.1</span><span class="p">):</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">fd_map</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">ident</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">addr</span> <span class="o">=</span> <span class="n">fd_map</span><span class="p">[</span><span class="n">w</span><span class="o">.</span><span class="n">fileno</span><span class="p">()][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">w</span><span class="o">.</span><span class="n">getsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_ERROR</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">connected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">fd</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="n">fd_map</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r</span><span class="si">%d</span><span class="s">/</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">total</span><span class="o">-</span><span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">),</span><span class="n">total</span><span class="p">))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+    <span class="k">print</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">connected</span><span class="p">:</span>
+        <span class="n">connect_with_adb</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 
 </div>
 <span class="n">argparser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="s">&quot;Discover Zedboards on a network&quot;</span><span class="p">)</span>
 <span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-n&#39;</span><span class="p">,</span> <span class="s">&#39;--network&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;xxx.xxx.xxx.xxx/N&#39;</span><span class="p">)</span>
 
+<div class="viewcode-block" id="do_work"><a class="viewcode-back" href="../python/discover_tcp.html#discover_tcp.do_work">[docs]</a><span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s">&#39;darwin&#39;</span><span class="p">:</span>
+        <span class="n">do_work_kqueue</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">do_work_poll</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">)</span>
+</div>
 <div class="viewcode-block" id="detect_network"><a class="viewcode-back" href="../python/discover_tcp.html#discover_tcp.detect_network">[docs]</a><span class="k">def</span> <span class="nf">detect_network</span><span class="p">():</span>
     <span class="k">global</span> <span class="n">zedboards</span>
     <span class="n">zedboards</span> <span class="o">=</span> <span class="p">[]</span>

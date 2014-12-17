@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4. Portal Package &mdash; connectal 14.11.6 documentation</title>
+    <title>6. Portal Package &mdash; connectal 14.11.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -27,7 +27,7 @@
     <link rel="top" title="connectal 14.11.6 documentation" href="../index.html" />
     <link rel="up" title="Connectal BSV Libraries" href="bsv.html" />
     <link rel="next" title="Connectal Examples" href="../examples/index.html" />
-    <link rel="prev" title="3. CtrlMux Package" href="ctrlmux.html" /> 
+    <link rel="prev" title="5. MemTypes Package" href="memtypes.html" /> 
   </head>
   <body>
     <div class="related">
@@ -46,7 +46,7 @@
           <a href="../examples/index.html" title="Connectal Examples"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="ctrlmux.html" title="3. CtrlMux Package"
+          <a href="memtypes.html" title="5. MemTypes Package"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
           <li><a href="bsv.html" accesskey="U">Connectal BSV Libraries</a> &raquo;</li> 
@@ -59,18 +59,16 @@
           <div class="body">
             
   <div class="section" id="package-Portal">
-<span id="portal-package"></span><h1>4. Portal Package<a class="headerlink" href="#package-Portal" title="Permalink to this headline">¶</a></h1>
+<span id="portal-package"></span><h1>6. Portal Package<a class="headerlink" href="#package-Portal" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="pipeportal-interface">
-<h2>4.1. PipePortal Interface<a class="headerlink" href="#pipeportal-interface" title="Permalink to this headline">¶</a></h2>
+<h2>6.1. PipePortal Interface<a class="headerlink" href="#pipeportal-interface" title="Permalink to this headline">¶</a></h2>
 <dl class="interface">
 <dt id="Portal::PipePortal">
-<em class="property">interface </em><tt class="descclassname">Portal::</tt><tt class="descname">PipePortal</tt><a class="headerlink" href="#Portal::PipePortal" title="Permalink to this definition">¶</a></dt>
-<dt>
-<tt class="descname">:parameter: numeric type numRequests, numeric type numIndications, numeric type slaveDataWidth</tt></dt>
+<em class="property">interface </em><tt class="descclassname">Portal::</tt><tt class="descname">PipePortal</tt><big>(</big><em>numeric type numRequests</em>, <em>numeric type numIndications</em>, <em>numeric type slaveDataWidth</em><big>)</big><a class="headerlink" href="#Portal::PipePortal" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><dl class="method">
 <dt id="Portal::PipePortal.messageSize">
-<tt class="descname">messageSize</tt><big>(</big>Bit#(16) methodNumber<big>)</big> &rarr; Bit#(16)<a class="headerlink" href="#Portal::PipePortal.messageSize" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">messageSize</tt><big>(</big><em>Bit#(16) methodNumber</em><big>)</big> &rarr; Bit#(16)<a class="headerlink" href="#Portal::PipePortal.messageSize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the message size of the methodNumber method of the portal.</p>
 </dd></dl>
 
@@ -89,10 +87,10 @@
 
 </div>
 <div class="section" id="memportal-interface">
-<h2>4.2. MemPortal Interface<a class="headerlink" href="#memportal-interface" title="Permalink to this headline">¶</a></h2>
+<h2>6.2. MemPortal Interface<a class="headerlink" href="#memportal-interface" title="Permalink to this headline">¶</a></h2>
 <dl class="interface">
 <dt id="Portal::MemPortal">
-<em class="property">interface </em><tt class="descclassname">Portal::</tt><tt class="descname">MemPortal</tt><a class="headerlink" href="#Portal::MemPortal" title="Permalink to this definition">¶</a></dt>
+<em class="property">interface </em><tt class="descclassname">Portal::</tt><tt class="descname">MemPortal</tt><big>(</big><em>numeric type slaveAddrWidth</em>, <em>numeric type slaveDataWidth</em><big>)</big><a class="headerlink" href="#Portal::MemPortal" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="subinterface">
 <dt id="Portal::MemPortal.slave">
 <tt class="descname">slave</tt> &rarr; PhysMemSlave#(slaveAddrWidth,slaveDataWidth)<a class="headerlink" href="#Portal::MemPortal.slave" title="Permalink to this definition">¶</a></dt>
@@ -112,29 +110,29 @@
 
 <dl class="function">
 <dt id="Portal::getSlave">
-<tt class="descclassname">Portal::</tt><tt class="descname">getSlave</tt><big>(</big>MemPortal#(_a,_d) p<big>)</big> &rarr; PhysMemSlave(_a,_d)<a class="headerlink" href="#Portal::getSlave" title="Permalink to this definition">¶</a></dt>
+<em class="property">function </em><tt class="descclassname">Portal::</tt><tt class="descname">getSlave</tt><big>(</big><em>MemPortal#(_a</em>, <em>_d) p</em><big>)</big> &rarr; PhysMemSlave(_a,_d)<a class="headerlink" href="#Portal::getSlave" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="Portal::getInterrupt">
-<tt class="descclassname">Portal::</tt><tt class="descname">getInterrupt</tt><big>(</big>MemPortal#(_a,_d) p<big>)</big> &rarr; ReadOnly#(Bool)<a class="headerlink" href="#Portal::getInterrupt" title="Permalink to this definition">¶</a></dt>
+<em class="property">function </em><tt class="descclassname">Portal::</tt><tt class="descname">getInterrupt</tt><big>(</big><em>MemPortal#(_a</em>, <em>_d) p</em><big>)</big> &rarr; ReadOnly#(Bool)<a class="headerlink" href="#Portal::getInterrupt" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="Portal::getInterruptVector">
-<tt class="descclassname">Portal::</tt><tt class="descname">getInterruptVector</tt><big>(</big>Vector#(numPortals, MemPortal#(_a,_d)) portals<big>)</big> &rarr; Vector#(16, ReadOnly#(Bool))<a class="headerlink" href="#Portal::getInterruptVector" title="Permalink to this definition">¶</a></dt>
+<em class="property">function </em><tt class="descclassname">Portal::</tt><tt class="descname">getInterruptVector</tt><big>(</big><em>Vector#(numPortals</em>, <em>MemPortal#(_a</em>, <em>_d)) portals</em><big>)</big> &rarr; Vector#(16,ReadOnly#(Bool))<a class="headerlink" href="#Portal::getInterruptVector" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
 <div class="section" id="sharememoryportal-interface">
-<h2>4.3. ShareMemoryPortal Interface<a class="headerlink" href="#sharememoryportal-interface" title="Permalink to this headline">¶</a></h2>
+<h2>6.3. ShareMemoryPortal Interface<a class="headerlink" href="#sharememoryportal-interface" title="Permalink to this headline">¶</a></h2>
 <dl class="interface">
 <dt id="Portal::SharedMemoryPortal">
-<em class="property">interface </em><tt class="descclassname">Portal::</tt><tt class="descname">SharedMemoryPortal</tt><a class="headerlink" href="#Portal::SharedMemoryPortal" title="Permalink to this definition">¶</a></dt>
+<em class="property">interface </em><tt class="descclassname">Portal::</tt><tt class="descname">SharedMemoryPortal</tt><big>(</big><em>numeric type dataBusWidth</em><big>)</big><a class="headerlink" href="#Portal::SharedMemoryPortal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Should be in SharedMemoryPortal.bsv</p>
 <dl class="subinterface">
-<dt>
-<tt class="descname">readClient;</tt></dt>
+<dt id="Portal::SharedMemoryPortal.readClient">
+<tt class="descname">readClient</tt> &rarr; MemReadClient(dataBusWidth)<a class="headerlink" href="#Portal::SharedMemoryPortal.readClient" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="subinterface">
@@ -142,16 +140,69 @@
 <tt class="descname">writeClient</tt> &rarr; MemWriteClient#(dataBusWidth)<a class="headerlink" href="#Portal::SharedMemoryPortal.writeClient" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="interface">
+<dl class="subinterface">
 <dt id="Portal::SharedMemoryPortal.cfg">
-<em class="property">interface </em><tt class="descname">cfg</tt> &rarr; SharedMemoryPortalConfig<a class="headerlink" href="#Portal::SharedMemoryPortal.cfg" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">cfg</tt> &rarr; SharedMemoryPortalConfig<a class="headerlink" href="#Portal::SharedMemoryPortal.cfg" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="subinterface">
-<dt id="Portal::interrupt">
-<tt class="descclassname">Portal::</tt><tt class="descname">interrupt</tt> &rarr; ReadOnly#(Bool)<a class="headerlink" href="#Portal::interrupt" title="Permalink to this definition">¶</a></dt>
+<dt id="Portal::SharedMemoryPortal.interrupt">
+<tt class="descname">interrupt</tt> &rarr; ReadOnly#(Bool)<a class="headerlink" href="#Portal::SharedMemoryPortal.interrupt" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="connectaltop-interface">
+<h2>6.4. ConnectalTop Interface<a class="headerlink" href="#connectaltop-interface" title="Permalink to this headline">¶</a></h2>
+<dl class="interface">
+<dt id="Portal::ConnectalTop">
+<em class="property">interface </em><tt class="descclassname">Portal::</tt><tt class="descname">ConnectalTop</tt><big>(</big><em>numeric type addrWidth</em>, <em>numeric type dataWidth</em>, <em>type pins</em>, <em>numeric type numMasters</em><big>)</big><a class="headerlink" href="#Portal::ConnectalTop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interface ConnectalTop is the interface exposed by the top module of a Connectal hardware design.</p>
+<dl class="subinterface">
+<dt id="Portal::ConnectalTop.slave">
+<tt class="descname">slave</tt> &rarr; PhysMemSlave#(32,32)<a class="headerlink" href="#Portal::ConnectalTop.slave" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="subinterface">
+<dt id="Portal::ConnectalTop.masters">
+<tt class="descname">masters</tt> &rarr; Vector#(numMasters,PhysMemMaster#(addrWidth, dataWidth))<a class="headerlink" href="#Portal::ConnectalTop.masters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="subinterface">
+<dt id="Portal::ConnectalTop.interrupt">
+<tt class="descname">interrupt</tt> &rarr; Vector#(16,ReadOnly#(Bool))<a class="headerlink" href="#Portal::ConnectalTop.interrupt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="subinterface">
+<dt id="Portal::ConnectalTop.leds">
+<tt class="descname">leds</tt> &rarr; LEDS<a class="headerlink" href="#Portal::ConnectalTop.leds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="subinterface">
+<dt id="Portal::ConnectalTop.pins">
+<tt class="descname">pins</tt> &rarr; pins<a class="headerlink" href="#Portal::ConnectalTop.pins" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="stdconnectaltop-typedef">
+<h2>6.5. StdConnectalTop Typedef<a class="headerlink" href="#stdconnectaltop-typedef" title="Permalink to this headline">¶</a></h2>
+<dl class="typedef">
+<dt id="Portal::StdConnectalTop">
+<em class="property">typedef </em><tt class="descclassname">Portal::</tt><tt class="descname">StdConnectalTop</tt><big>(</big>numeric type addrWidth<big>)</big> &rarr; ConnectalTop#(addrWidth,64,Empty,0)<a class="headerlink" href="#Portal::StdConnectalTop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type StdConnectalTop indicates a Connectal hardware design with no
+user defined pins and no user of host shared memory. The &#8220;pins&#8221;
+interface is Empty and the number of masters is 0.</p>
+</dd></dl>
+
+<dl class="typedef">
+<dt id="Portal::StdConnectalDmaTop">
+<em class="property">typedef </em><tt class="descclassname">Portal::</tt><tt class="descname">StdConnectalDmaTop</tt><big>(</big>numeric type addrWidth<big>)</big> &rarr; ConnectalTop#(addrWidth,64,Empty,1)<a class="headerlink" href="#Portal::StdConnectalDmaTop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type StdConnectalDmaTop indicates a Connectal hardware design with
+no user defined pins and a single client of host shared memory. The
+&#8220;pins&#8221; interface is Empty and the number of masters is 1.</p>
 </dd></dl>
 
 </div>
@@ -165,17 +216,19 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">4. Portal Package</a><ul>
-<li><a class="reference internal" href="#pipeportal-interface">4.1. PipePortal Interface</a></li>
-<li><a class="reference internal" href="#memportal-interface">4.2. MemPortal Interface</a></li>
-<li><a class="reference internal" href="#sharememoryportal-interface">4.3. ShareMemoryPortal Interface</a></li>
+<li><a class="reference internal" href="#">6. Portal Package</a><ul>
+<li><a class="reference internal" href="#pipeportal-interface">6.1. PipePortal Interface</a></li>
+<li><a class="reference internal" href="#memportal-interface">6.2. MemPortal Interface</a></li>
+<li><a class="reference internal" href="#sharememoryportal-interface">6.3. ShareMemoryPortal Interface</a></li>
+<li><a class="reference internal" href="#connectaltop-interface">6.4. ConnectalTop Interface</a></li>
+<li><a class="reference internal" href="#stdconnectaltop-typedef">6.5. StdConnectalTop Typedef</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="ctrlmux.html"
-                        title="previous chapter">3. CtrlMux Package</a></p>
+  <p class="topless"><a href="memtypes.html"
+                        title="previous chapter">5. MemTypes Package</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="../examples/index.html"
                         title="next chapter">Connectal Examples</a></p>
@@ -217,7 +270,7 @@
           <a href="../examples/index.html" title="Connectal Examples"
              >next</a> |</li>
         <li class="right" >
-          <a href="ctrlmux.html" title="3. CtrlMux Package"
+          <a href="memtypes.html" title="5. MemTypes Package"
              >previous</a> |</li>
         <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
           <li><a href="bsv.html" >Connectal BSV Libraries</a> &raquo;</li> 

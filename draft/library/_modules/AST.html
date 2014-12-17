@@ -142,7 +142,6 @@
     <span class="k">return</span> <span class="n">rc</span>
 </div>
 <div class="viewcode-block" id="serialize_json"><a class="viewcode-back" href="../python/AST.html#AST.serialize_json">[docs]</a><span class="k">def</span> <span class="nf">serialize_json</span><span class="p">(</span><span class="n">interfaces</span><span class="p">,</span> <span class="n">globalimports</span><span class="p">,</span> <span class="n">dutname</span><span class="p">,</span> <span class="n">interfaceList</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Returns json serialized data&#39;&#39;&#39;</span>
     <span class="n">itemlist</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">interfaces</span><span class="p">:</span>
         <span class="n">itemlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">classInfo</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
@@ -221,9 +220,7 @@
         <span class="k">return</span> <span class="s">&#39;&lt;variable: </span><span class="si">%s</span><span class="s"> : </span><span class="si">%s</span><span class="s">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Interface"><a class="viewcode-back" href="../python/AST.html#AST.Interface">[docs]</a><span class="k">class</span> <span class="nc">Interface</span><span class="p">(</span><span class="n">InterfaceMixin</span><span class="p">):</span>
-    <span class="s">&#39;Represents a BSV Interface&#39;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">decls</span><span class="p">,</span> <span class="n">subinterfacename</span><span class="p">,</span> <span class="n">packagename</span><span class="p">):</span>
-        <span class="s">&#39;Create an Interface with name, params, decls, subintfacename, packagename&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;Interface&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
@@ -261,9 +258,7 @@
         <span class="k">return</span> <span class="s">&#39;{typeclassinstance </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Module"><a class="viewcode-back" href="../python/AST.html#AST.Module">[docs]</a><span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
-    <span class="sd">&#39;&#39;&#39;represents a BSV Module&#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">moduleContext</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">interface</span><span class="p">,</span> <span class="n">provisos</span><span class="p">,</span> <span class="n">decls</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;instantiates a BSV Module&#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;Module&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">moduleContext</span> <span class="o">=</span> <span class="n">moduleContext</span>
@@ -272,7 +267,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">provisos</span> <span class="o">=</span> <span class="n">provisos</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decls</span> <span class="o">=</span> <span class="n">decls</span>
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;string representation of a BSV Module&#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="s">&#39;{module: </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decls</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="EnumElement"><a class="viewcode-back" href="../python/AST.html#AST.EnumElement">[docs]</a><span class="k">class</span> <span class="nc">EnumElement</span><span class="p">:</span>
@@ -283,7 +277,6 @@
         <span class="k">return</span> <span class="s">&#39;{enumelt: </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Enum"><a class="viewcode-back" href="../python/AST.html#AST.Enum">[docs]</a><span class="k">class</span> <span class="nc">Enum</span><span class="p">:</span>
-    <span class="s">&#39;Represents a BSV Enum&#39;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;Enum&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">elements</span>
@@ -302,7 +295,6 @@
         <span class="k">return</span> <span class="n">StructMember</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">paramBindings</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </div></div>
 <div class="viewcode-block" id="Struct"><a class="viewcode-back" href="../python/AST.html#AST.Struct">[docs]</a><span class="k">class</span> <span class="nc">Struct</span><span class="p">:</span>
-    <span class="s">&#39;Represents a BSV Struct&#39;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;Struct&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">elements</span>
@@ -334,7 +326,6 @@
                      <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">paramBindings</span><span class="p">))</span>
 </div></div>
 <div class="viewcode-block" id="Type"><a class="viewcode-back" href="../python/AST.html#AST.Type">[docs]</a><span class="k">class</span> <span class="nc">Type</span><span class="p">:</span>
-    <span class="s">&#39;Represents a BSV Type&#39;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;Type&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>

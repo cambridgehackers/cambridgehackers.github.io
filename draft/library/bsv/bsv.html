@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="connectal 14.11.6 documentation" href="../index.html" />
-    <link rel="next" title="1. HostInterface Package" href="hostinterface.html" />
+    <link rel="next" title="1. CtrlMux Package" href="ctrlmux.html" />
     <link rel="prev" title="Introduction" href="../intro.html" /> 
   </head>
   <body>
@@ -42,7 +42,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="hostinterface.html" title="1. HostInterface Package"
+          <a href="ctrlmux.html" title="1. CtrlMux Package"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../intro.html" title="Introduction"
@@ -60,13 +60,34 @@
 <h1>Connectal BSV Libraries<a class="headerlink" href="#connectal-bsv-libraries" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="hostinterface.html">1. HostInterface Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="leds.html">2. Leds Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ctrlmux.html">3. CtrlMux Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="portal.html">4. Portal Package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="portal.html#pipeportal-interface">4.1. PipePortal Interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="portal.html#memportal-interface">4.2. MemPortal Interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="portal.html#sharememoryportal-interface">4.3. ShareMemoryPortal Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ctrlmux.html">1. CtrlMux Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hostinterface.html">2. HostInterface Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hostinterface.html#host-specific-constants">2.1. Host-Specific Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hostinterface.html#host-specific-interfaces">2.2. Host-Specific Interfaces</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="leds.html">3. Leds Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memportal.html">4. MemPortal Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="memportal.html#mkmemportal-module">4.1. mkMemPortal Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="memtypes.html">5. MemTypes Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#constants">5.1. Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#data-types">5.2. Data Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#physical-memory-clients-and-servers">5.3. Physical Memory Clients and Servers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#memory-clients-and-servers">5.4. Memory Clients and Servers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#memory-engine-types">5.5. Memory Engine Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#memory-engine-interfaces">5.6. Memory Engine Interfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#memory-traffic-interfaces">5.7. Memory Traffic Interfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#connectable-instances">5.8. Connectable Instances</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="portal.html">6. Portal Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="portal.html#pipeportal-interface">6.1. PipePortal Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="portal.html#memportal-interface">6.2. MemPortal Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="portal.html#sharememoryportal-interface">6.3. ShareMemoryPortal Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="portal.html#connectaltop-interface">6.4. ConnectalTop Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="portal.html#stdconnectaltop-typedef">6.5. StdConnectalTop Typedef</a></li>
 </ul>
 </li>
 </ul>
@@ -83,8 +104,8 @@
   <p class="topless"><a href="../intro.html"
                         title="previous chapter">Introduction</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="hostinterface.html"
-                        title="next chapter">1. HostInterface Package</a></p>
+  <p class="topless"><a href="ctrlmux.html"
+                        title="next chapter">1. CtrlMux Package</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/bsv/bsv.txt"
@@ -120,7 +141,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="hostinterface.html" title="1. HostInterface Package"
+          <a href="ctrlmux.html" title="1. CtrlMux Package"
              >next</a> |</li>
         <li class="right" >
           <a href="../intro.html" title="Introduction"
