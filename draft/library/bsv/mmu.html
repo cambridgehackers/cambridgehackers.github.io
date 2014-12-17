@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>9. MMU Package &mdash; connectal 14.12.6 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '14.12.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="connectal 14.12.6 documentation" href="../index.html" />
+    <link rel="up" title="Connectal BSV Libraries" href="bsv.html" />
+    <link rel="next" title="10. Pipe Package" href="pipe.html" />
+    <link rel="prev" title="8. MemTypes Package" href="memtypes.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../bsv-pkgindex.html" title="Bsv Package Index"
+             >bsvpkgs</a> |</li>
+        <li class="right" >
+          <a href="pipe.html" title="10. Pipe Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="memtypes.html" title="8. MemTypes Package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">connectal 14.12.6 documentation</a> &raquo;</li>
+          <li><a href="bsv.html" accesskey="U">Connectal BSV Libraries</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="package-MMU">
+<span id="mmu-package"></span><h1>9. MMU Package<a class="headerlink" href="#package-MMU" title="Permalink to this headline">¶</a></h1>
+<dl class="typedef">
+<dt id="MMU::32 MaxNumSGLists">
+<em class="property">typedef </em><tt class="descclassname">MMU::</tt><tt class="descname">32 MaxNumSGLists</tt><a class="headerlink" href="#MMU::32 MaxNumSGLists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="typedef">
+<dt id="MMU::Bit#(TLog#(MaxNumSGLists)) SGListId">
+<em class="property">typedef </em><tt class="descclassname">MMU::</tt><tt class="descname">Bit#(TLog#(MaxNumSGLists)) SGListId</tt><a class="headerlink" href="#MMU::Bit#(TLog#(MaxNumSGLists)) SGListId" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="typedef">
+<dt id="MMU::12 SGListPageShift0">
+<em class="property">typedef </em><tt class="descclassname">MMU::</tt><tt class="descname">12 SGListPageShift0</tt><a class="headerlink" href="#MMU::12 SGListPageShift0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="typedef">
+<dt id="MMU::16 SGListPageShift4">
+<em class="property">typedef </em><tt class="descclassname">MMU::</tt><tt class="descname">16 SGListPageShift4</tt><a class="headerlink" href="#MMU::16 SGListPageShift4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="typedef">
+<dt id="MMU::20 SGListPageShift8">
+<em class="property">typedef </em><tt class="descclassname">MMU::</tt><tt class="descname">20 SGListPageShift8</tt><a class="headerlink" href="#MMU::20 SGListPageShift8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="typedef">
+<dt id="MMU::Bit#(TLog#(MaxNumSGLists)) RegionsIdx">
+<em class="property">typedef </em><tt class="descclassname">MMU::</tt><tt class="descname">Bit#(TLog#(MaxNumSGLists)) RegionsIdx</tt><a class="headerlink" href="#MMU::Bit#(TLog#(MaxNumSGLists)) RegionsIdx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="typedef">
+<dt id="MMU::8 IndexWidth">
+<em class="property">typedef </em><tt class="descclassname">MMU::</tt><tt class="descname">8 IndexWidth</tt><a class="headerlink" href="#MMU::8 IndexWidth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="section" id="address-translation">
+<h2>9.1. Address Translation<a class="headerlink" href="#address-translation" title="Permalink to this headline">¶</a></h2>
+<dl class="struct">
+<dt id="MMU::ReqTup">
+<em class="property">struct </em><tt class="descclassname">MMU::</tt><tt class="descname">ReqTup</tt><a class="headerlink" href="#MMU::ReqTup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Address translation request type</p>
+<dl class="field">
+<dt id="MMU::ReqTup.id">
+<tt class="descname">id</tt> &rarr; SGListId            <a class="headerlink" href="#MMU::ReqTup.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Which SGList to use.</p>
+</dd></dl>
+
+<dl class="field">
+<dt id="MMU::ReqTup.off">
+<tt class="descname">off</tt> &rarr; Bit#(MemOffsetSize)<a class="headerlink" href="#MMU::ReqTup.off" title="Permalink to this definition">¶</a></dt>
+<dd><p>The address to translate.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="interface">
+<dt id="MMU::MMU">
+<em class="property">interface </em><tt class="descclassname">MMU::</tt><tt class="descname">MMU</tt><big>(</big><em>numeric type addrWidth</em><big>)</big><a class="headerlink" href="#MMU::MMU" title="Permalink to this definition">¶</a></dt>
+<dd><p>An address translator</p>
+<dl class="subinterface">
+<dt id="MMU::MMU.request">
+<tt class="descname">request</tt> &rarr; MMURequest<a class="headerlink" href="#MMU::MMU.request" title="Permalink to this definition">¶</a></dt>
+<dd><p>The interface of the MMU that is exposed to software as a portal.</p>
+</dd></dl>
+
+<dl class="subinterface">
+<dt id="MMU::MMU.addr">
+<tt class="descname">addr</tt> &rarr; Vector#(2,Server#(ReqTup,Bit#(addrWidth)))<a class="headerlink" href="#MMU::MMU.addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>The address translation servers</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="module">
+<dt id="MMU::mkMMU">
+<em class="property">module </em><tt class="descclassname">MMU::</tt><tt class="descname">mkMMU</tt><big>(</big><em>Integer iid</em>, <em>Bool bsimMMap</em>, <em>MMUIndication mmuIndication</em><big>)</big> &rarr; (MMU#(addrWidth)<a class="headerlink" href="#MMU::mkMMU" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiates an address translator that stores a scatter-gather
+list to define the logical to physical address mapping.</p>
+<p>Parameter iid is the portal identifier of the MMURequest interface.</p>
+<p>Parameter bsimMMAP ??</p>
+</dd></dl>
+
+</div>
+<div class="section" id="multiple-address-translators">
+<h2>9.2. Multiple Address Translators<a class="headerlink" href="#multiple-address-translators" title="Permalink to this headline">¶</a></h2>
+<dl class="interface">
+<dt id="MMU::MMUAddrServer">
+<em class="property">interface </em><tt class="descclassname">MMU::</tt><tt class="descname">MMUAddrServer</tt><big>(</big><em>numeric type addrWidth</em>, <em>numeric type numServers</em><big>)</big><a class="headerlink" href="#MMU::MMUAddrServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used by mkMemServer to share an MMU among multiple memory interfaces.</p>
+<dl class="interface">
+<dt id="MMU::MMUAddrServer.Vector">
+<em class="property">interface </em><tt class="descname">Vector</tt><big>(</big><em>(numServers</em>, <em>Server#(ReqTup</em>, <em>Bit#(addrWidth))) servers</em><big>)</big><a class="headerlink" href="#MMU::MMUAddrServer.Vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>The vector of address translators.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="module">
+<dt id="MMU::mkMMUAddrServer">
+<em class="property">module </em><tt class="descclassname">MMU::</tt><tt class="descname">mkMMUAddrServer</tt><big>(</big><em>Server#(ReqTup</em>, <em>Bit#(addrWidth)) server</em><big>)</big> &rarr; (MMUAddrServer#(addrWidth,numServers)<a class="headerlink" href="#MMU::mkMMUAddrServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiates an MMUAddrServer that shares the input server among multiple clients.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">9. MMU Package</a><ul>
+<li><a class="reference internal" href="#address-translation">9.1. Address Translation</a></li>
+<li><a class="reference internal" href="#multiple-address-translators">9.2. Multiple Address Translators</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="memtypes.html"
+                        title="previous chapter">8. MemTypes Package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pipe.html"
+                        title="next chapter">10. Pipe Package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/bsv/mmu.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../bsv-pkgindex.html" title="Bsv Package Index"
+             >bsvpkgs</a> |</li>
+        <li class="right" >
+          <a href="pipe.html" title="10. Pipe Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="memtypes.html" title="8. MemTypes Package"
+             >previous</a> |</li>
+        <li><a href="../index.html">connectal 14.12.6 documentation</a> &raquo;</li>
+          <li><a href="bsv.html" >Connectal BSV Libraries</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Jamey Hicks, Myron King, John Ankcorn.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

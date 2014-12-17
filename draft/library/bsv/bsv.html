@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Connectal BSV Libraries &mdash; connectal 14.11.6 documentation</title>
+    <title>Connectal BSV Libraries &mdash; connectal 14.12.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '14.11.6',
+        VERSION:     '14.12.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="connectal 14.11.6 documentation" href="../index.html" />
-    <link rel="next" title="1. CtrlMux Package" href="ctrlmux.html" />
-    <link rel="prev" title="Introduction" href="../intro.html" /> 
+    <link rel="top" title="connectal 14.12.6 documentation" href="../index.html" />
+    <link rel="next" title="1. Address Generator" href="addressgenerator.html" />
+    <link rel="prev" title="Welcome to connectal’s documentation!" href="../index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,15 +39,12 @@
           <a href="../bsv-pkgindex.html" title="Bsv Package Index"
              >bsvpkgs</a> |</li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="ctrlmux.html" title="1. CtrlMux Package"
+          <a href="addressgenerator.html" title="1. Address Generator"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../intro.html" title="Introduction"
+          <a href="../index.html" title="Welcome to connectal’s documentation!"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">connectal 14.12.6 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -60,34 +57,55 @@
 <h1>Connectal BSV Libraries<a class="headerlink" href="#connectal-bsv-libraries" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="ctrlmux.html">1. CtrlMux Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hostinterface.html">2. HostInterface Package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="hostinterface.html#host-specific-constants">2.1. Host-Specific Constants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="hostinterface.html#host-specific-interfaces">2.2. Host-Specific Interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="addressgenerator.html">1. Address Generator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arith.html">2. Arith Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ctrlmux.html">3. CtrlMux Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hostinterface.html">4. HostInterface Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hostinterface.html#host-specific-constants">4.1. Host-Specific Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hostinterface.html#host-specific-interfaces">4.2. Host-Specific Interfaces</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="leds.html">3. Leds Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="memportal.html">4. MemPortal Package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="memportal.html#mkmemportal-module">4.1. mkMemPortal Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leds.html">5. Leds Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memportal.html">6. MemPortal Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="memportal.html#mkmemportal-module">6.1. mkMemPortal Module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="memtypes.html">5. MemTypes Package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="memtypes.html#constants">5.1. Constants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="memtypes.html#data-types">5.2. Data Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="memtypes.html#physical-memory-clients-and-servers">5.3. Physical Memory Clients and Servers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="memtypes.html#memory-clients-and-servers">5.4. Memory Clients and Servers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="memtypes.html#memory-engine-types">5.5. Memory Engine Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="memtypes.html#memory-engine-interfaces">5.6. Memory Engine Interfaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="memtypes.html#memory-traffic-interfaces">5.7. Memory Traffic Interfaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="memtypes.html#connectable-instances">5.8. Connectable Instances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memreadengine.html">7. MemreadEngine Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memtypes.html">8. MemTypes Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#constants">8.1. Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#data-types">8.2. Data Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#physical-memory-clients-and-servers">8.3. Physical Memory Clients and Servers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#memory-clients-and-servers">8.4. Memory Clients and Servers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#memory-engine-types">8.5. Memory Engine Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#memory-engine-interfaces">8.6. Memory Engine Interfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#memory-traffic-interfaces">8.7. Memory Traffic Interfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memtypes.html#connectable-instances">8.8. Connectable Instances</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="portal.html">6. Portal Package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="portal.html#pipeportal-interface">6.1. PipePortal Interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="portal.html#memportal-interface">6.2. MemPortal Interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="portal.html#sharememoryportal-interface">6.3. ShareMemoryPortal Interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="portal.html#connectaltop-interface">6.4. ConnectalTop Interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="portal.html#stdconnectaltop-typedef">6.5. StdConnectalTop Typedef</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mmu.html">9. MMU Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mmu.html#address-translation">9.1. Address Translation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mmu.html#multiple-address-translators">9.2. Multiple Address Translators</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pipe.html">10. Pipe Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pipe.html#pipe-interfaces">10.1. Pipe Interfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipe.html#get-and-put-pipes">10.2. Get and Put Pipes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipe.html#connectable-pipes">10.3. Connectable Pipes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipe.html#mapping-over-pipes">10.4. Mapping over Pipes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipe.html#reducing-pipes">10.5. Reducing Pipes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipe.html#functions-on-pipes-of-vectors">10.6. Functions on Pipes of Vectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipe.html#funneling-and-unfunneling">10.7. Funneling and Unfunneling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipe.html#fork-and-join">10.8. Fork and Join</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipe.html#funnel-pipes">10.9. Funnel Pipes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipe.html#delimited-pipes">10.10. Delimited Pipes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="portal.html">11. Portal Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="portal.html#pipeportal-interface">11.1. PipePortal Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="portal.html#memportal-interface">11.2. MemPortal Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="portal.html#sharememoryportal-interface">11.3. ShareMemoryPortal Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="portal.html#connectaltop-interface">11.4. ConnectalTop Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="portal.html#stdconnectaltop-typedef">11.5. StdConnectalTop Typedef</a></li>
 </ul>
 </li>
 </ul>
@@ -101,11 +119,11 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../intro.html"
-                        title="previous chapter">Introduction</a></p>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Welcome to connectal&#8217;s documentation!</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="ctrlmux.html"
-                        title="next chapter">1. CtrlMux Package</a></p>
+  <p class="topless"><a href="addressgenerator.html"
+                        title="next chapter">1. Address Generator</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/bsv/bsv.txt"
@@ -138,15 +156,12 @@
           <a href="../bsv-pkgindex.html" title="Bsv Package Index"
              >bsvpkgs</a> |</li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="ctrlmux.html" title="1. CtrlMux Package"
+          <a href="addressgenerator.html" title="1. Address Generator"
              >next</a> |</li>
         <li class="right" >
-          <a href="../intro.html" title="Introduction"
+          <a href="../index.html" title="Welcome to connectal’s documentation!"
              >previous</a> |</li>
-        <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">connectal 14.12.6 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4. MemPortal Package &mdash; connectal 14.11.6 documentation</title>
+    <title>6. MemPortal Package &mdash; connectal 14.12.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '14.11.6',
+        VERSION:     '14.12.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,10 +24,10 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="connectal 14.11.6 documentation" href="../index.html" />
+    <link rel="top" title="connectal 14.12.6 documentation" href="../index.html" />
     <link rel="up" title="Connectal BSV Libraries" href="bsv.html" />
-    <link rel="next" title="5. MemTypes Package" href="memtypes.html" />
-    <link rel="prev" title="3. Leds Package" href="leds.html" /> 
+    <link rel="next" title="7. MemreadEngine Package" href="memreadengine.html" />
+    <link rel="prev" title="5. Leds Package" href="leds.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,15 +40,12 @@
           <a href="../bsv-pkgindex.html" title="Bsv Package Index"
              >bsvpkgs</a> |</li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="memtypes.html" title="5. MemTypes Package"
+          <a href="memreadengine.html" title="7. MemreadEngine Package"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="leds.html" title="3. Leds Package"
+          <a href="leds.html" title="5. Leds Package"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
+        <li><a href="../index.html">connectal 14.12.6 documentation</a> &raquo;</li>
           <li><a href="bsv.html" accesskey="U">Connectal BSV Libraries</a> &raquo;</li> 
       </ul>
     </div>  
@@ -58,13 +55,13 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="memportal-package">
-<h1>4. MemPortal Package<a class="headerlink" href="#memportal-package" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="package-MemPortal">
+<span id="memportal-package"></span><h1>6. MemPortal Package<a class="headerlink" href="#package-MemPortal" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="mkmemportal-module">
-<h2>4.1. mkMemPortal Module<a class="headerlink" href="#mkmemportal-module" title="Permalink to this headline">¶</a></h2>
+<h2>6.1. mkMemPortal Module<a class="headerlink" href="#mkmemportal-module" title="Permalink to this headline">¶</a></h2>
 <dl class="module">
-<dt id="mkMemPortal">
-<em class="property">module </em><tt class="descname">mkMemPortal</tt><big>(</big><em>Bit#(slaveDataWidth) ifcId</em>, <em>PipePortal#(numRequests</em>, <em>numIndications</em>, <em>slaveDataWidth) portal</em><big>)</big> &rarr; (MemPortal#(slaveAddrWidth, slaveDataWidth)<a class="headerlink" href="#mkMemPortal" title="Permalink to this definition">¶</a></dt>
+<dt id="MemPortal::mkMemPortal">
+<em class="property">module </em><tt class="descclassname">MemPortal::</tt><tt class="descname">mkMemPortal</tt><big>(</big><em>Bit#(slaveDataWidth) ifcId</em>, <em>PipePortal#(numRequests</em>, <em>numIndications</em>, <em>slaveDataWidth) portal</em><big>)</big> &rarr; (MemPortal#(slaveAddrWidth, slaveDataWidth)<a class="headerlink" href="#MemPortal::mkMemPortal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes an interface identifier and a PipePortal and returns a MemPortal.</p>
 </dd></dl>
 
@@ -79,18 +76,18 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">4. MemPortal Package</a><ul>
-<li><a class="reference internal" href="#mkmemportal-module">4.1. mkMemPortal Module</a></li>
+<li><a class="reference internal" href="#">6. MemPortal Package</a><ul>
+<li><a class="reference internal" href="#mkmemportal-module">6.1. mkMemPortal Module</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="leds.html"
-                        title="previous chapter">3. Leds Package</a></p>
+                        title="previous chapter">5. Leds Package</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="memtypes.html"
-                        title="next chapter">5. MemTypes Package</a></p>
+  <p class="topless"><a href="memreadengine.html"
+                        title="next chapter">7. MemreadEngine Package</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/bsv/memportal.txt"
@@ -123,15 +120,12 @@
           <a href="../bsv-pkgindex.html" title="Bsv Package Index"
              >bsvpkgs</a> |</li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="memtypes.html" title="5. MemTypes Package"
+          <a href="memreadengine.html" title="7. MemreadEngine Package"
              >next</a> |</li>
         <li class="right" >
-          <a href="leds.html" title="3. Leds Package"
+          <a href="leds.html" title="5. Leds Package"
              >previous</a> |</li>
-        <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li>
+        <li><a href="../index.html">connectal 14.12.6 documentation</a> &raquo;</li>
           <li><a href="bsv.html" >Connectal BSV Libraries</a> &raquo;</li> 
       </ul>
     </div>

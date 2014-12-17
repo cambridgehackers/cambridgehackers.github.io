@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>makefilegen &mdash; connectal 14.11.6 documentation</title>
+    <title>7. MemreadEngine Package &mdash; connectal 14.12.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '14.11.6',
+        VERSION:     '14.12.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,10 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="connectal 14.11.6 documentation" href="../index.html" /> 
+    <link rel="top" title="connectal 14.12.6 documentation" href="../index.html" />
+    <link rel="up" title="Connectal BSV Libraries" href="bsv.html" />
+    <link rel="next" title="8. MemTypes Package" href="memtypes.html" />
+    <link rel="prev" title="6. MemPortal Package" href="memportal.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,9 +40,13 @@
           <a href="../bsv-pkgindex.html" title="Bsv Package Index"
              >bsvpkgs</a> |</li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li> 
+          <a href="memtypes.html" title="8. MemTypes Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="memportal.html" title="6. MemPortal Package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">connectal 14.12.6 documentation</a> &raquo;</li>
+          <li><a href="bsv.html" accesskey="U">Connectal BSV Libraries</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -48,8 +55,20 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-makefilegen">
-<span id="makefilegen"></span><h1>makefilegen<a class="headerlink" href="#module-makefilegen" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="package-MemreadEngine">
+<span id="memreadengine-package"></span><h1>7. MemreadEngine Package<a class="headerlink" href="#package-MemreadEngine" title="Permalink to this headline">¶</a></h1>
+<dl class="module">
+<dt id="MemreadEngine::mkMemreadEngine(MemreadEngineV">
+<em class="property">module </em><tt class="descclassname">MemreadEngine::</tt><tt class="descname">mkMemreadEngine(MemreadEngineV</tt><big>(</big><em>dataWidth</em>, <em>cmdQDepth</em>, <em>numServers</em><big>)</big><a class="headerlink" href="#MemreadEngine::mkMemreadEngine(MemreadEngineV" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a MemreadEngine with default 256 bytes of buffer per server.</p>
+</dd></dl>
+
+<dl class="module">
+<dt id="MemreadEngine::mkMemreadEngineBuff">
+<em class="property">module </em><tt class="descclassname">MemreadEngine::</tt><tt class="descname">mkMemreadEngineBuff</tt><big>(</big><em>Integer bufferSizeBytes</em><big>)</big> &rarr;  (MemreadEngineV#(dataWidth, cmdQDepth, numServers)<a class="headerlink" href="#MemreadEngine::mkMemreadEngineBuff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a MemreadEngine with the specified buffer size.</p>
+</dd></dl>
+
 </div>
 
 
@@ -58,9 +77,15 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="memportal.html"
+                        title="previous chapter">6. MemPortal Package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="memtypes.html"
+                        title="next chapter">8. MemTypes Package</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/python/makefilegen.txt"
+    <li><a href="../_sources/bsv/memreadengine.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -90,9 +115,13 @@
           <a href="../bsv-pkgindex.html" title="Bsv Package Index"
              >bsvpkgs</a> |</li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li><a href="../index.html">connectal 14.11.6 documentation</a> &raquo;</li> 
+          <a href="memtypes.html" title="8. MemTypes Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="memportal.html" title="6. MemPortal Package"
+             >previous</a> |</li>
+        <li><a href="../index.html">connectal 14.12.6 documentation</a> &raquo;</li>
+          <li><a href="bsv.html" >Connectal BSV Libraries</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

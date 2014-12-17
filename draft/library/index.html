@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to connectal’s documentation! &mdash; connectal 14.11.6 documentation</title>
+    <title>Welcome to connectal’s documentation! &mdash; connectal 14.12.6 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '14.11.6',
+        VERSION:     '14.12.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="connectal 14.11.6 documentation" href="#" />
-    <link rel="next" title="Introduction" href="intro.html" /> 
+    <link rel="top" title="connectal 14.12.6 documentation" href="#" />
+    <link rel="next" title="Connectal BSV Libraries" href="bsv/bsv.html" /> 
   </head>
   <body>
     <div class="related">
@@ -38,12 +38,9 @@
           <a href="bsv-pkgindex.html" title="Bsv Package Index"
              >bsvpkgs</a> |</li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="intro.html" title="Introduction"
+          <a href="bsv/bsv.html" title="Connectal BSV Libraries"
              accesskey="N">next</a> |</li>
-        <li><a href="#">connectal 14.11.6 documentation</a> &raquo;</li> 
+        <li><a href="#">connectal 14.12.6 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -57,14 +54,18 @@
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bsv/bsv.html">Connectal BSV Libraries</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="bsv/ctrlmux.html">1. CtrlMux Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bsv/hostinterface.html">2. HostInterface Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bsv/leds.html">3. Leds Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bsv/memportal.html">4. MemPortal Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bsv/memtypes.html">5. MemTypes Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bsv/portal.html">6. Portal Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bsv/addressgenerator.html">1. Address Generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bsv/arith.html">2. Arith Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bsv/ctrlmux.html">3. CtrlMux Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bsv/hostinterface.html">4. HostInterface Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bsv/leds.html">5. Leds Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bsv/memportal.html">6. MemPortal Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bsv/memreadengine.html">7. MemreadEngine Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bsv/memtypes.html">8. MemTypes Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bsv/mmu.html">9. MMU Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bsv/pipe.html">10. Pipe Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bsv/portal.html">11. Portal Package</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples/index.html">Connectal Examples</a><ul>
@@ -79,7 +80,6 @@
 <ul class="simple">
 <li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
 <li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
-<li><em class="xref std std-ref">pkgindex</em></li>
 <li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
 </ul>
 </div>
@@ -97,8 +97,8 @@
 </ul>
 
   <h4>Next topic</h4>
-  <p class="topless"><a href="intro.html"
-                        title="next chapter">Introduction</a></p>
+  <p class="topless"><a href="bsv/bsv.html"
+                        title="next chapter">Connectal BSV Libraries</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/index.txt"
@@ -131,12 +131,9 @@
           <a href="bsv-pkgindex.html" title="Bsv Package Index"
              >bsvpkgs</a> |</li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="intro.html" title="Introduction"
+          <a href="bsv/bsv.html" title="Connectal BSV Libraries"
              >next</a> |</li>
-        <li><a href="#">connectal 14.11.6 documentation</a> &raquo;</li> 
+        <li><a href="#">connectal 14.12.6 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
