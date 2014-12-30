@@ -1,5 +1,5 @@
 ---
-title: Connectal Zynq: Getting Started
+title: Connectal Zynq Getting Started
 layout: post
 tags: instructable zynq zedboard
 ---

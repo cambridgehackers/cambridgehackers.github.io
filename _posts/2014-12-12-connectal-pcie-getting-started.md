@@ -1,5 +1,5 @@
 ---
-title: Connectal PCIe: Getting Started
+title: Connectal PCIe Getting Started
 layout: post
 tags: instructable virtex pcie
 ---
