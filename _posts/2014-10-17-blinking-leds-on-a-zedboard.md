@@ -1,7 +1,8 @@
 ---
 title: How to Blink the LEDs on a Zedboard using Connectal
 layout: post
-tags: instructable zynq
+category: zedboard
+tags: [zedboard, instructable]
 ---
 
 We published an Instructable describing [how to blink the LEDS on a Zedboard using Connectal](http://www.instructables.com/id/Blinking-the-LEDs-on-a-Zedboard-using-Bluespec-and/)
