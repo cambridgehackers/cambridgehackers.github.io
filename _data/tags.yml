@@ -1,0 +1,9 @@
+- slug: zedboard
+  name: Zedboard
+- slug: pcie
+  name: PCIe
+- slug: instructable
+  name: Instructable
+- slug: docs
+  name: Documentation
+
