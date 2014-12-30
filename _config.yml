@@ -12,8 +12,8 @@ description: > # this means to ignore newlines until "baseurl:"
   across platforms.
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "http://www.connectal.org" # the base hostname & protocol for your site
-Archive: /archive
-Feed: atom.xml
+archive: /archive
+feed: /atom.xml
 twitter_username: cambridgehackers
 github_username:  cambridgehackers
 
