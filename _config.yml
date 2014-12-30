@@ -1,0 +1,21 @@
+# Site settings
+title: Connectal Project
+email: jamey.hicks@qrclab.com
+description: > # this means to ignore newlines until "baseurl:"
+  Connectal supports flexible and consistent partitioning of
+  accelerated applications across hardware and software
+  components. The Connectal framework connects hardware and software
+  via remote asynchronous method invocation by compiling interface
+  declarations. It enables concurrent access to hardware accelerators
+  from software. Connectal enables high-bandwidth sharing of system
+  memory with hardware accelerators. Connectal provides portability
+  across platforms.
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "http://www.connectal.org" # the base hostname & protocol for your site
+Archive: /archive
+Feed: atom.xml
+twitter_username: cambridgehackers
+github_username:  cambridgehackers
+
+# Build settings
+markdown: kramdown
