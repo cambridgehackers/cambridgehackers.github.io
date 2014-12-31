@@ -31,7 +31,18 @@
               <span class="icon  icon--twitter">
               </span>
 
-              <span class="username">{{ site.twitter_username }}</span>
+              Twitter <span class="username">{{ site.twitter_username }}</span>
+            </a>
+          </li>
+          {% endif %}
+
+          {% if site.googleplus_id %}
+          <li>
+            <a href="https://plus.google.com/{{ site.googleplus_id }}" rel="publisher">
+              <span class="icon  icon--googleplus">
+              </span>
+	      Google+
+              <span class="username">{{ site.googleplus_username }}</span>
             </a>
           </li>
           {% endif %}

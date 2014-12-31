@@ -14,7 +14,9 @@ baseurl: "" # the subpath of your site, e.g. /blog/
 url: "http://www.connectal.org" # the base hostname & protocol for your site
 archive: /archive
 feed: /atom.xml
-twitter_username: cambridgehackers
+googleplus_id: 117959521328494879184
+googleplus_username: Connectal
+twitter_username: connectalproj
 github_username:  cambridgehackers
 tag_page_layout: tag_page
 tag_page_dir: tag
