@@ -1,5 +1,8 @@
-Why Connectal?
-==============
+---
+title: Why Connectal?
+layout: post
+tags: connectal
+---
 
 Are you happy with the connection between software development and
 hardware development on your projects? Do you wish you had more
