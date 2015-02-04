@@ -1,0 +1,11 @@
+Connectal Developer's Guide
+===========================
+
+Contents:
+
+.. toctree::
+   :maxdepth: 2
+
+   projectstructure.rst
+   compilingproject.rst
+

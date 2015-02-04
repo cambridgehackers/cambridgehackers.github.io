@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Compiling and Running Connectal Project &mdash; connectal 14.12.6 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '14.12.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="connectal 14.12.6 documentation" href="../index.html" />
+    <link rel="up" title="Connectal Developer’s Guide" href="devguide.html" />
+    <link rel="next" title="Connectal BSV Libraries" href="../bsv/bsv.html" />
+    <link rel="prev" title="Connectal Project Structure" href="projectstructure.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../bsv-pkgindex.html" title="Bsv Package Index"
+             >bsvpkgs</a> |</li>
+        <li class="right" >
+          <a href="../bsv/bsv.html" title="Connectal BSV Libraries"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="projectstructure.html" title="Connectal Project Structure"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">connectal 14.12.6 documentation</a> &raquo;</li>
+          <li><a href="devguide.html" accesskey="U">Connectal Developer&#8217;s Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="compiling-and-running-connectal-project">
+<h1>Compiling and Running Connectal Project<a class="headerlink" href="#compiling-and-running-connectal-project" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="compiling-on-connectalbuild">
+<h2>Compiling on ConnectalBuild<a class="headerlink" href="#compiling-on-connectalbuild" title="Permalink to this headline">¶</a></h2>
+<p>The Connectal toolchain can be run on ConnectalBuild using the
+following Buildbot web interface:
+<a class="reference external" href="http://connectalbuild.qrclab.com/projects">http://connectalbuild.qrclab.com/projects</a>.</p>
+<dl class="docutils">
+<dt>begin{figure}[!h]</dt>
+<dd><blockquote class="first">
+<div>centering</div></blockquote>
+<p class="last">includegraphics[width=0.75textwidth]{connectalbuild.pdf}</p>
+</dd>
+</dl>
+<p>end{figure}</p>
+<p><em>Before submitting a project, you must sign in using your github
+credentials.</em> We do not store credentials, but pass them througth
+to github.  Next, enter a name for the project, which will be used
+for subsequent build requests through the Buildbot web interface.  The
+project must be in a publicly accessible git-hub repository, whose
+Repo location is entered beginning with git:// as follows
+git://github.com/connectal-examples/leds.git.  If the project
+makefile is not in the root directory of the repository, enter its
+relative path in the &#8216;Path&#8217; field of the form.  If a particular branch
+or revision number are desired, enter these as well.  Check the button
+to select the build target.  If you have selected a zynq-based
+platform and would like the tool-chain to automatically program the
+device and execute the design as its final step, then enter the IP
+address of your board. This works only because <tt class="docutils literal"><span class="pre">adb</span></tt> doesn&#8217;t
+require authentication. SSH keys required to run on PCIe-based
+platforms are not currently supported.  Finally, don&#8217;t forget to click
+&#8216;Add&#8217;. If the project name has already been used, you will be prompted
+to enter a new one at this point.</p>
+</div>
+<div class="section" id="compiling-locally">
+<h2>Compiling Locally<a class="headerlink" href="#compiling-locally" title="Permalink to this headline">¶</a></h2>
+<p>Before compiling a project locally, you will need to install the
+toolchain.  After setting the <tt class="docutils literal"><span class="pre">CONNECTALDIR</span></tt> to the root of the
+connectal source tree, enter the command &#8216;Make</p>
+</div>
+<div class="section" id="executing-the-design">
+<h2>Executing The Design<a class="headerlink" href="#executing-the-design" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Compiling and Running Connectal Project</a><ul>
+<li><a class="reference internal" href="#compiling-on-connectalbuild">Compiling on ConnectalBuild</a></li>
+<li><a class="reference internal" href="#compiling-locally">Compiling Locally</a></li>
+<li><a class="reference internal" href="#executing-the-design">Executing The Design</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="projectstructure.html"
+                        title="previous chapter">Connectal Project Structure</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../bsv/bsv.html"
+                        title="next chapter">Connectal BSV Libraries</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/devguide/compilingproject.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../bsv-pkgindex.html" title="Bsv Package Index"
+             >bsvpkgs</a> |</li>
+        <li class="right" >
+          <a href="../bsv/bsv.html" title="Connectal BSV Libraries"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="projectstructure.html" title="Connectal Project Structure"
+             >previous</a> |</li>
+        <li><a href="../index.html">connectal 14.12.6 documentation</a> &raquo;</li>
+          <li><a href="devguide.html" >Connectal Developer&#8217;s Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Jamey Hicks, Myron King, John Ankcorn.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
