@@ -31,7 +31,7 @@
 
 
 body{
-background: #eee url('images/bg_overlay-2.png') repeat bottom left;
+background: #eee url(bg_overlay-2.png) repeat bottom left;
 z-index: 0;
 font-family:"OpenSans",Helvetica ,Arial,sans-serif;
 font-weight:400;
@@ -135,7 +135,7 @@ a {
 
 .column li {
     line-height: 2em;
-    list-style-image: url("images/list_squares-2.png");
+    list-style-image: url("list_squares-2.png");
 }
 
 .column p{
@@ -154,7 +154,7 @@ a {
 }
 #publications li {
     line-height: 1.7em;
-    list-style-image: url("images/list_squares.png");
+    list-style-image: url("list_squares.png");
     margin-bottom: 0.7em;
 }
 
