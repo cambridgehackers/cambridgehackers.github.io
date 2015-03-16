@@ -91,6 +91,12 @@ a {
 	overflow: auto;
 }
 
+#documentation{
+	background-color:#fff;
+	padding:0.3% 2% 2% 2%;
+	margin-top:2.5%;
+}
+
 #news{
 	background-color:#fff;
 	padding:0.3% 2% 2% 2%;
