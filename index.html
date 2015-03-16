@@ -3,8 +3,11 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Connectal Project</title>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
 
     <link rel="alternate" type="application/atom+xml" title="Feed" href="/atom.xml" />
     <link rel="stylesheet" type="text/css" href="stylesheets/styles.css" media="screen">
@@ -12,7 +15,6 @@
 
     {% include google_analytics.html %}
 
-    <title>Connectal Project</title>
   </head>
 
   <body>
@@ -29,7 +31,7 @@ Connectal consists of a fully-scripted tool-chain and a collection of libraries 
 communicating with hardware components implemented in FPGA or ASIC.
 </p>
 <p>
-We have identified the following four goals as central to this endeavor:
+The following goals are central to this endeavor:
 <ul>
 <li>Connect software and hardware by compiling interface declarations.</li>
 <li>Enable concurrent access to hardware accelerators from software.</li>
@@ -64,9 +66,9 @@ We have identified the following four goals as central to this endeavor:
       <li>
         <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
 
-        <h3>
+        <h4>
           <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h3>
+        </h4>
 	{{ post.excerpt }}
       </li>
     {% endfor %}
@@ -75,7 +77,6 @@ We have identified the following four goals as central to this endeavor:
 </div>
     </div>
     
-
 <a href="https://plus.google.com/117959521328494879184" rel="publisher">Google+</a>
 
   </body>
