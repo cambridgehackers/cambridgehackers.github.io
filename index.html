@@ -64,23 +64,20 @@ The following goals are central to this endeavor:
 	<li><a href="http://www.instructables.com/id/Connectal/">A Collection of tutorials created using instructables</a></li>
         </ul>
     </div>
-
-    <div id="news">
-      <section id="main_content">
-        <h2>News</h2>
-  <ul class="post-list">
-    {% for post in site.posts %}
-      <li>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
-
-        <h4>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h4>
-	{{ post.excerpt }}
-      </li>
-    {% endfor %}
-  </ul>
-</section>
+<div id="columnswrapper">
+<div class="column">
+        <h2><a name="news" class="anchor" href="news.html">News</a></h2>
+<p><a name="news" class="anchor" href="news.html">See the breaking news about Connectal</a></p>
+</div>
+<div class="column">
+        <h2>Members</h2>
+<p><a href="https://www.linkedin.com/in/jameyhicks">Jamey Hicks</a></p>
+<p><a href="https://www.linkedin.com/in/johnankcorn">John Ankcorn</a></p>
+<p><a href="https://www.linkedin.com/in/myrondking">Myron King</a></p>
+</div>
+    </div>
+<div class="column">
+        <h2>Collaborators</h2>
 </div>
     </div>
     
