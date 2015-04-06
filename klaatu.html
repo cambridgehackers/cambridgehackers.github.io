@@ -12,7 +12,12 @@
     <link rel="alternate" type="application/atom+xml" title="Feed" href="/atom.xml" />
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-
+    <!-- Bootstrap: Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <!-- Bootstrap: Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+    <!-- Bootstrap: Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     {% include google_analytics.html %}
 
   </head>
@@ -24,14 +29,7 @@
       <section id="main_content">
         <h2>Klaatu</h2>
 
-<p>
-Here is a simple diagram of the components in the Android software stack:
-</p>
-
-<p>
-<img src="klaatu/images/android.png" width="600" height="600"/>
-</p>
-
+        <h3>Background: internal structure of Android</h3>
 <p>
 The Android software stack has been put together with quite a clean design:
 <ul>
@@ -40,45 +38,147 @@ The Android software stack has been put together with quite a clean design:
 <li> Android "middleware": provide a rich set of services for Dalvik applications</li>
 <li> Zygote system process: includes both shared system services for applications as well as window manager functionality</li>
 </ul>
+</p>
 
-The goal of this project is to cut the Android s/w stack below the Dalvik layer, enabling other projects to experiment with non-Dalvik approaches to constructing user applications.  To do this, the following steps are done:
+<p> <img src="klaatu/images/android.png" width="600" height="600"/> </p>
 
+        <h3>Can we put a different application/user interface framework on the Android middleware?</h3>
+<p>
+By cutting the Android s/w stack below the Dalvik layer, we enable other projects to experiment with non-Dalvik approaches to constructing user applications.
+<br>
+To do this, the following steps are performed:
 <ul>
 <li> Remove Applications, Middleware and Dalvik from the software build</li>
 <li> Add busybox and a few replacement servers</li>
 <li> Document the upper interface of the Android core pieces</li>
 <li> Experiment with several different application frameworks, including:
-      * Qt/QML
-      * Python/Kivy
-      * HTML5 (probably both Mozilla and Webkit)
-      * Game engines
+<ul>
+<li> Qt/QML</li>
+<li> Python/Kivy</li>
+<li> HTML5 (probably both Mozilla and Webkit)</li>
+<li> Game engines</li>
+<li> X Windows</li>
+</ul>
 </li>
 </ul>
+</p>
 
-Why are we doing this?
+<h3>Why are we doing this?</h3>
+<p>
 
    * Application frameworks, like the Android middleware, are so complex that it is easy to 'add' to them, but radically different approaches (like an HTML5-centric application ecosystem) are quite difficult to try
    * By carefully documenting/supporting the "below Dalvik" layer, it makes the 'testing of deliverables' from the hardware adaptation more precise and accurate.
    * By allowing experimentation in different UI frameworks, it is hoped that teams will be able to make appliances running in far smaller devices than would be required if the entire Android application ecosystem was supported.
 </p>
-<a href="klaatu/Klaatu.md">Klaatu</a>
+<h3>Structure of a klaatu platform</h3>
 
-  <ul>
-<li><a href="klaatu/Apis.md">Apis</a></li>
-  </ul>
-<p>Software build</p>
+<p>
+Klaatu is a minimal linux system containing AOS kernel, HAL and low
+level daemons. With other AOS systems, several services depended on the
+Java engine (Dalvik). As the Klaatu system contains no Java engine, some
+additional services (daemons) are required to create a fully functional
+system.
+
+<ul>
+<li>wifi/networking</li>
+<li>bluetooth</li>
+<li>power management</li>
+<li>messaging</li>
+</ul>
+
+Service daemon functionality is accessed via binder interfaces.
+
+One of several reference UI’s may be used to demonstrate the system:
+
+<ul>
+<li>Headless (command line only)</li>
+<li>Qt</li>
+<li>Webkit</li>
+<li>Native OpenGLES interface</li>
+</ul>
+
+<h3>Basic Klaatu architecture</h3>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-6">
+        <div style="border:1px solid black;padding:2em; background-color:lavender;">Example UI (Webkit, OpenGLES or headless</div>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3">
+        <div style="border:1px solid black;padding:2em; background-color:lavender;">( binder interface )</div>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-sm-6">
+        <div style="border:1px solid black;padding:2em; background-color:lavender;">klaatu_qmlscene</div>
+    </div>
+    <div class="col-sm-2">
+        <div style="border:1px solid black;padding:2em; background-color:lavender;">klaatu_phoneservice</div>
+    </div>
+    <div class="col-sm-2">
+        <div style="border:1px solid black;padding:2em; background-color:lavender;">klaatu_wifiservice</div>
+    </div>
+    <div class="col-sm-2">
+        <div style="border:1px solid black;padding:2em; background-color:lavender;">klaatu_powermanager</div>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-sm-3">
+        <div style="border:1px solid black;padding:2em; background-color:lavender;">binder</div>
+    </div>
+    <div class="col-sm-3">
+        <div style="border:1px solid black;padding:2em; background-color:lavender;">surfaceflinger</div>
+    </div>
+    <div class="col-sm-2">
+        <div style="border:1px solid black;padding:2em; background-color:lavender;">rild</div>
+    </div>
+    <div class="col-sm-2">
+        <div style="border:1px solid black;padding:2em; background-color:lavender;">wpa_suplicant</div>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3">
+        <div style="border:1px solid black;padding:2em; background-color:lavender;">Stagefright</div>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-sm-12">
+        <div style="border:1px solid black;padding:2em; background-color:lavender;">HAL libs/daemons (hw support)</div>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-sm-12">
+        <div style="border:1px solid black;padding:2em; background-color:lavender;">android kernel (hw support)</div>
+    </div>
+  </div>
+  <hr>
+</div>
+</p>
+Other functionality may be accessed via existing AOS interfaces:
+<p><a href="klaatu/Apis.md">Apis</a></p>
+<h3>Software build</h3>
   <ul>
 <li><a href="klaatu/KlaatuFlow.md">KlaatuFlow</a></li>
 <li><a href="klaatu/SysrootBuild.md">SysrootBuild</a></li>
 <img src="klaatu/images/flow.png" width="300" height="300"/>
 <li><a href="klaatu/UpstreamSources.md">UpstreamSources</a></li>
   </ul>
-<p>User Interface Frameworks</p>
+<h3>User Interface Frameworks</h3>
   <ul>
 <li><a href="klaatu/Kivy.md">Kivy</a></li>
 <li><a href="klaatu/Kivy-Manual-Build.md">Kivy-Manual-Build</a></li>
   </ul>
-<p>Debug and Maintenance</p>
+<h3>Debug and Maintenance</h3>
   <ul>
 <li><a href="klaatu/Commands.md">Commands</a></li>
 <li><a href="klaatu/Console.md">Console</a></li>
