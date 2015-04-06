@@ -1,0 +1,6 @@
+
+#xilinx
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1679", ATTRS{idProduct}=="2001",MODE="0666"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="3923", ATTRS{idProduct}=="717b",MODE="0666"
+#panda
+SUBSYSTEM=="usb", ATTRS{idVendor}=="0451", ATTRS{idProduct}=="d022",MODE="0666"

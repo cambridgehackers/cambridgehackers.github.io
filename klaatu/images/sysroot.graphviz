@@ -1,0 +1,11 @@
+digraph G {
+ upstream_sources -> sysroot [weight=8];
+ sysroot -> gcc_rpm
+ sysroot -> devel_rpm
+ sysroot -> devel_static_libraries_rpm
+ sysroot -> orig_flash_files_rpm
+ gcc_rpm -> work_area
+ devel_rpm -> work_area
+ devel_static_libraries_rpm -> work_area [style=dotted];
+ work_area -> flash_files
+ }

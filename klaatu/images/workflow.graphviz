@@ -1,0 +1,12 @@
+digraph G {
+ additional_Android_packages -> device_image;
+ commercial_device -> extracted_repo;
+ extracted_repo -> device_image;
+ upstream_sources -> sysroot [weight=8];
+ sysroot -> device_image [style=dotted];
+ SuSE_packages -> chroot;
+ sysroot -> chroot [style=dotted];
+ chroot -> binary_rpm;
+ binary_rpm -> device_image;
+ device_image -> flash_files
+ }
