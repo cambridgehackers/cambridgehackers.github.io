@@ -18,8 +18,14 @@
    * Capture a baseline with repo:
       * repo manifest -r -o oldbaseline.xml
 
-   * Udev rules for /etc/udev/rules.d :
-      * [80-klaatu.rules](https://gitorious.org/cambridge/cambridge-gitorious-wiki/blobs/raw/master/data/80-klaatu.rules)
+   * Udev rules for /etc/udev/rules.d : 
+```
+#xilinx
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1679", ATTRS{idProduct}=="2001",MODE="0666"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="3923", ATTRS{idProduct}=="717b",MODE="0666"
+#panda
+SUBSYSTEM=="usb", ATTRS{idVendor}=="0451", ATTRS{idProduct}=="d022",MODE="0666"
+```
 
    * Updating git on a repo build tree:
       * git remote add foo URL
@@ -29,5 +35,3 @@
 
    * Disable web security on Safari:
       * open -a '/Applications/Safari.app' --args --disable-web-security
-
-   * [more notes](https://docs.google.com/document/d/1A1Op7vNmPQgAQiafIxqa3bqMgo96YQEJqCcZo8o_TOY/pub)

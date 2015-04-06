@@ -10,13 +10,8 @@ Generic device bring-up steps
         additional JTAG hardware and device JTAG support.
 -   Get AOSP or vendor AOSP branch
 -   Get vendor binaries (e.g. Qualcomm) for target chipset
--   Get any Nokia specific drivers (display, touch, camera, and other
-    custom peripherals)
-    -   Device driver/support may require modification of both the
-        kernel and bootloader
 -   Build OS using custom build manifest that incorporates vendor
-    binaries and Nokia specific drivers. Recommend using build scripts
-    on Jenkins server.
+    binaries.
 
 Generic flashing steps
 ----------------------
