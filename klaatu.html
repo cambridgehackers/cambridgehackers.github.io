@@ -23,22 +23,69 @@
     <div id="klaatu">
       <section id="main_content">
         <h2>Klaatu</h2>
-  <ul class="post-list">
-<p><a href="klaatu/SysrootBuild.md">SysrootBuild</a></p>
-<p><a href="klaatu/Apis.md">Apis</a></p>
-<p><a href="klaatu/Background.md">Background</a></p>
-<p><a href="klaatu/Commands.md">Commands</a></p>
-<p><a href="klaatu/Console.md">Console</a></p>
-<p><a href="klaatu/Generic-Flashing-Instructions.md">Generic Flashing Instructions</a></p>
-<p><a href="klaatu/Kivy-Manual-Build.md">Kivy-Manual-Build</a></p>
-<p><a href="klaatu/Kivy.md">Kivy</a></p>
-<p><a href="klaatu/Klaatu-api.md">Klaatu api</a></p>
-<p><a href="klaatu/KlaatuFlow.md">KlaatuFlow</a></p>
-<p><a href="klaatu/Klaatu.md">Klaatu</a></p>
-<p><a href="klaatu/Notes.md">Notes</a></p>
-<p><a href="klaatu/PandaInitialFlash.md">Panda Initial Flash</a></p>
-<p><a href="klaatu/RecoveryOperation.md">Recovery Operation</a></p>
-<p><a href="klaatu/UpstreamSources.md">UpstreamSources</a></p>
+
+<p>
+Here is a simple diagram of the components in the Android software stack:
+</p>
+
+<p>
+<img src="klaatu/images/android.png" width="600" height="600"/>
+</p>
+
+<p>
+The Android software stack has been put together with quite a clean design:
+<ul>
+<li> Vendor adaptation: linux kernel and in selected user space libraries and processes</li>
+<li> Android "core": a C/C++ set of libraries and applications for startup, communications, media, graphics processing</li>
+<li> Android "middleware": provide a rich set of services for Dalvik applications</li>
+<li> Zygote system process: includes both shared system services for applications as well as window manager functionality</li>
+</ul>
+
+The goal of this project is to cut the Android s/w stack below the Dalvik layer, enabling other projects to experiment with non-Dalvik approaches to constructing user applications.  To do this, the following steps are done:
+
+<ul>
+<li> Remove Applications, Middleware and Dalvik from the software build</li>
+<li> Add busybox and a few replacement servers</li>
+<li> Document the upper interface of the Android core pieces</li>
+<li> Experiment with several different application frameworks, including:
+      * Qt/QML
+      * Python/Kivy
+      * HTML5 (probably both Mozilla and Webkit)
+      * Game engines
+</li>
+</ul>
+
+Why are we doing this?
+
+   * Application frameworks, like the Android middleware, are so complex that it is easy to 'add' to them, but radically different approaches (like an HTML5-centric application ecosystem) are quite difficult to try
+   * By carefully documenting/supporting the "below Dalvik" layer, it makes the 'testing of deliverables' from the hardware adaptation more precise and accurate.
+   * By allowing experimentation in different UI frameworks, it is hoped that teams will be able to make appliances running in far smaller devices than would be required if the entire Android application ecosystem was supported.
+</p>
+<a href="klaatu/Klaatu.md">Klaatu</a>
+
+  <ul>
+<li><a href="klaatu/Apis.md">Apis</a></li>
+  </ul>
+<p>Software build</p>
+  <ul>
+<li><a href="klaatu/KlaatuFlow.md">KlaatuFlow</a></li>
+<li><a href="klaatu/SysrootBuild.md">SysrootBuild</a></li>
+<img src="klaatu/images/flow.png" width="300" height="300"/>
+<li><a href="klaatu/UpstreamSources.md">UpstreamSources</a></li>
+  </ul>
+<p>User Interface Frameworks</p>
+  <ul>
+<li><a href="klaatu/Kivy.md">Kivy</a></li>
+<li><a href="klaatu/Kivy-Manual-Build.md">Kivy-Manual-Build</a></li>
+  </ul>
+<p>Debug and Maintenance</p>
+  <ul>
+<li><a href="klaatu/Commands.md">Commands</a></li>
+<li><a href="klaatu/Console.md">Console</a></li>
+<li><a href="klaatu/Generic-Flashing-Instructions.md">Generic Flashing Instructions</a></li>
+<li><a href="klaatu/PandaInitialFlash.md">Panda Initial Flash</a></li>
+<li><a href="klaatu/RecoveryOperation.md">Recovery Operation</a></li>
+<li><a href="klaatu/Notes.md">Notes</a></li>
   </ul>
 </section>
 </div>
