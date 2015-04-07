@@ -12,20 +12,14 @@
     <link rel="alternate" type="application/atom+xml" title="Feed" href="/atom.xml" />
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-    <!-- Bootstrap: Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-    <!-- Bootstrap: Optional theme -->
-    <!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"-->
-    <!-- Bootstrap: Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     {% include google_analytics.html %}
 
   </head>
 
   <body>
 
-    <div id="container">
-    <div id="klaatu">
+    <div class="container">
+    <div class="klaatu">
       <section id="main_content">
         <h2>Klaatu</h2>
 
@@ -40,11 +34,11 @@ The Android software stack has been put together with quite a clean design:
 </ul>
 </p>
 
-<p> <img src="klaatu/images/android.png" width="600" height="600"/> </p>
+<p><img src="klaatu/images/android.png" width="600" height="600"/></p>
 
     </section>
     </div>
-    <div id="klaatu">
+    <div class="klaatu">
         <h3>Can we put a different application/user interface framework on the Android middleware?</h3>
 <p>
 By cutting the Android s/w stack below the Dalvik layer, we enable other projects to experiment with non-Dalvik approaches to constructing user applications.
@@ -67,7 +61,7 @@ To do this, the following steps are performed:
 </p>
 
     </div>
-    <div id="klaatu">
+    <div class="klaatu">
 <h3>Why are we doing this?</h3>
 <p>
 
@@ -78,7 +72,7 @@ To do this, the following steps are performed:
 </ul>
 </p>
     </div>
-    <div id="klaatu">
+    <div class="klaatu">
 <h3>Structure of a klaatu platform</h3>
 
 <p>
@@ -105,87 +99,61 @@ One of several reference UI’s may be used to demonstrate the system:
 <li>Webkit</li>
 <li>Native OpenGLES interface</li>
 </ul>
-
-<h3>Basic Klaatu architecture</h3>
-<div class="container">
-  <div class="row">
-    <div class="col-sm-4">
-        <div class="boxtype">Example UI (Webkit, OpenGLES or headless</div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-2"></div>
-    <div class="col-sm-2">
-        <div class="boxtype">( binder interface )</div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-4">
-        <div class="boxtype">qmlscene</div>
-    </div>
-    <div class="col-sm-3">
-        <div class="boxtype">phoneservice</div>
-    </div>
-    <div class="col-sm-3">
-        <div class="boxtype">wifiservice</div>
-    </div>
-    <div class="col-sm-2">
-        <div class="boxtype">powermanager</div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-2">
-        <div class="boxtype">binder</div>
-    </div>
-    <div class="col-sm-2">
-        <div class="boxtype">surfaceflinger</div>
-    </div>
-    <div class="col-sm-2">
-        <div class="boxtype">rild</div>
-    </div>
-    <div class="col-sm-2">
-        <div class="boxtype">wpa_suplicant</div>
-    </div>
-    <div class="col-sm-2"></div>
-  </div>
-  <div class="row">
-    <div class="col-sm-2"></div>
-    <div class="col-sm-2">
-        <div class="boxtype">Stagefright</div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-12">
-        <div class="boxtype">HAL libs/daemons (hw support)</div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-12">
-        <div class="boxtype">Linux kernel (hw support)</div>
-    </div>
-  </div>
-</div>
 </p>
-Other functionality may be accessed via existing AOS interfaces:
-<p><a href="klaatu/Apis.md">Apis</a></p>
+      <div class="gcontainer">
+      <div class="row">
+        <div class="col-sm-4"><div class="boxtype">Example UI (Webkit, OpenGLES or headless</div></div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+            <a href="klaatu/Apis.md"><div class="boxtype">Klaatu API (including binder interface )</div></a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4"><div class="boxtype">qmlscene</div></div>
+        <div class="col-sm-2"><div class="boxtype">phoneservice</div></div>
+        <div class="col-sm-3"><div class="boxtype">wifiservice</div></div>
+        <div class="col-sm-2"><div class="boxtype">powermanager</div></div>
+      </div>
+      <div class="row">
+        <div class="col-sm-2"><div class="boxtype">binder</div></div>
+        <div class="col-sm-2"><div class="boxtype">surfaceflinger</div></div>
+        <div class="col-sm-2"><div class="boxtype">rild</div></div>
+        <div class="col-sm-2"><div class="boxtype">wpa_suplicant</div></div>
+        <div class="col-sm-2"></div>
+      </div>
+      <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-2"><div class="boxtype">Stagefright</div></div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12"><div class="boxtype">HAL libs/daemons (hw support)</div></div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12"><div class="boxtype">Linux kernel (hw support)</div></div>
+      </div>
+      </div>
+      <p style="clear:both;"></p>
+      <p><h4 style="text-align: center">Basic Klaatu architecture</h4></p>
     </div>
-    <div id="klaatu">
+<br>
+    <div class="klaatu">
 <h3>Software build</h3>
   <ul>
 <li><a href="klaatu/KlaatuFlow.md">KlaatuFlow</a></li>
 <li><a href="klaatu/SysrootBuild.md">SysrootBuild</a></li>
-<img src="klaatu/images/flow.png" width="300" height="300"/>
+<img src="klaatu/images/flow.png" width="500" height="500"/>
 <li><a href="klaatu/UpstreamSources.md">UpstreamSources</a></li>
   </ul>
     </div>
-    <div id="klaatu">
+    <div class="klaatu">
 <h3>User Interface Frameworks</h3>
   <ul>
 <li><a href="klaatu/Kivy.md">Kivy</a></li>
 <li><a href="klaatu/Kivy-Manual-Build.md">Kivy-Manual-Build</a></li>
   </ul>
     </div>
-    <div id="klaatu">
+    <div class="klaatu">
 <h3>Debug and Maintenance</h3>
   <ul>
 <li><a href="klaatu/Commands.md">Commands</a></li>

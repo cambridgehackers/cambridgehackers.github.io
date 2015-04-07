@@ -29,23 +29,20 @@
     font-style: normal;
 }
 
-
 body{
-background: #eee url(bg_overlay-2.png) repeat bottom left;
-z-index: 0;
-font-family:"OpenSans",Helvetica ,Arial,sans-serif;
-font-weight:400;
-/*font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;*/
-color:#555;
+    background: #eee url(bg_overlay-2.png) repeat bottom left;
+    z-index: 0;
+    font-family:"OpenSans",Helvetica ,Arial,sans-serif;
+    font-weight:400;
+    /*font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;*/
+    color:#555;
 }
 
 h1,h2,h3{
 	font-family:"OpenSans","Helvetica Neue",Helvetica,Arial,sans-serif;
 	color:#eb4d00; /*#EB6400;*/
-
 	font-weight:700;
 }
-
 
 img {
     border: 0 none;
@@ -53,15 +50,15 @@ img {
     max-width: 100%;
     vertical-align: middle;
 	-moz-border-radius: 4px;
-border-radius: 4px;
-
+    border-radius: 4px;
 }
+
 a {
     color: #0088CC;
     text-decoration: none;
 }
 
-#container{
+#container {
 	max-width:1170px;
 	margin:40px auto;
 	font-size:0.9em;
@@ -87,23 +84,22 @@ a {
 	clear:both;
 	overflow: auto;
 }
+
 .boxtype {
-border:1px solid black;padding:0.5em; margin: 0.2em; text-align: center; background-color:lavender;
+	border:1px solid black;
+	padding:0.5em;
+	margin: 0.2em;
+	text-align: center;
+	background-color:lavender;
 }
 
-#documentation{
+#documentation, #subprojectsname{
 	background-color:#fff;
 	padding:0.3% 2% 2% 2%;
 	margin-top:2.5%;
 }
 
-#klaatu{
-	background-color:#fff;
-	padding:0.3% 2% 2% 2%;
-	margin-top:2.5%;
-}
-
-#news{
+#news, .klaatu{
 	background-color:#fff;
 	padding:0.3% 2% 2% 2%;
 	margin-top:2.5%;
@@ -164,13 +160,13 @@ border:1px solid black;padding:0.5em; margin: 0.2em; text-align: center; backgro
 	padding-left:2.5%;
 }
 
-#publications, #members{
+#publications, #members, #subprojects{
 	clear:both;
 	padding:0.3% 2% 2% 2%;
 	background-color:#fff;
 	margin-bottom:20px;
 }
-#publications li {
+#publications, #subprojects li {
     line-height: 1.7em;
     list-style-image: url("list_squares.png");
     margin-bottom: 0.7em;
@@ -180,14 +176,12 @@ border:1px solid black;padding:0.5em; margin: 0.2em; text-align: center; backgro
 font-style:italic;
 }
 
-
-#main, #publications, .column, #news, #members, #klaatu, .site-header, .page-content, .site-footer {
+#main, #publications, .column, #news, #members, .klaatu, .site-header, .page-content, .site-footer, #subprojects {
 	-moz-border-radius: 4px;
-border-radius: 4px;
--webkit-box-shadow: 0 6px 5px -7px #333333;
+             border-radius: 4px;
+        -webkit-box-shadow: 0 6px 5px -7px #333333;
 	   -moz-box-shadow: 0 6px 5px -7px #333333;
 	        box-shadow: 0 6px 5px -7px #333333;
-
 }
 
 @media all and (min-width: 480px) {
@@ -195,20 +189,18 @@ border-radius: 4px;
 	padding:0.5% 0%;
 	margin-bottom:20px;
 }	
-	
 
 #pic{
-
 	width:18%;
 	float:left;
 	margin-top:14px;
 }
-#department {
+#department,.klaatu {
 	padding:0.5% 0%;
 	margin-bottom:20px;
 }
 
-#intro{
+#intro, #subprojects{
 	float:left;
 	width:45%;
 	margin-top:0.8%;
@@ -230,4 +222,39 @@ div#columnswrapper div:first-child, div#columnswrapper div:last-child {
 	margin-left:0;
 	margin-right:0;
 }
+}
+.gcontainer{
+     clear:both;
+     padding-right:0.1em;
+     padding-left:0.1em;
+     margin-right:auto;
+     margin-left:auto;
+}
+@media (min-width:768px){.gcontainer{width:750px } }
+@media (min-width:992px){.gcontainer{width:970px } }
+@media (min-width:1200px){.gcontainer{width:1170px }
+.row {margin-right:-0.1em;margin-left:-0.1em}
+    .col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,
+    .col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9 {
+	position:relative;
+	min-height:1px;
+	padding-right:0.1em;
+	padding-left:0.1em;
+background-color:red;
+}
+@media (min-width:768px) {
+    .col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,
+    .col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9 {float:left}
+    .col-sm-12 {width:100%}
+    .col-sm-11 {width:91.66666667%}
+    .col-sm-10 {width:83.33333333%}
+    .col-sm-9 {width:75%}
+    .col-sm-8 {width:66.66666667%}
+    .col-sm-7 {width:58.33333333%}
+    .col-sm-6 {width:50%}
+    .col-sm-5 {width:41.66666667%}
+    .col-sm-4 {width:33.33333333%}
+    .col-sm-3 {width:25%}
+    .col-sm-2 {width:16.66666667%}
+    .col-sm-1 {width:8.33333333%}
 }
