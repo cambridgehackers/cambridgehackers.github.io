@@ -84,6 +84,14 @@ a {
 	clear:both;
 	overflow: auto;
 }
+#sales{
+	max-width:1170px;
+	background-color:#F5BCA9;
+	padding:4% 2% 2% 2%;
+	margin-bottom:20px;
+	clear:both;
+	overflow: auto;
+}
 
 .boxtype {
 	border:1px solid black;
@@ -176,7 +184,7 @@ a {
 font-style:italic;
 }
 
-#main, #publications, .column, #news, #members, .klaatu, .site-header, .page-content, .site-footer, #subprojects {
+#main, #publications, .column, #news, #members, .klaatu, .site-header, .page-content, .site-footer, #subprojects, #sales {
 	-moz-border-radius: 4px;
              border-radius: 4px;
         -webkit-box-shadow: 0 6px 5px -7px #333333;
@@ -185,7 +193,7 @@ font-style:italic;
 }
 
 @media all and (min-width: 480px) {
-#main{
+#main {
 	padding:0.5% 0%;
 	margin-bottom:20px;
 }	
@@ -209,6 +217,9 @@ font-style:italic;
 	clear:both;
 	background-color:#99FF00;
 }
+.benefits{
+	clear:both;
+}
 	
 #container {
 	
@@ -219,6 +230,10 @@ font-style:italic;
 	width:27%;
 }
 div#columnswrapper div:first-child, div#columnswrapper div:last-child {
+	margin-left:0;
+	margin-right:0;
+}
+div.benefits div:first-child, div.benefits div:last-child {
 	margin-left:0;
 	margin-right:0;
 }
@@ -240,7 +255,6 @@ div#columnswrapper div:first-child, div#columnswrapper div:last-child {
 	min-height:1px;
 	padding-right:0.1em;
 	padding-left:0.1em;
-background-color:red;
 }
 @media (min-width:768px) {
     .col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,
